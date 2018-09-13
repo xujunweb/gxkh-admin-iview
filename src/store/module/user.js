@@ -9,6 +9,8 @@ export default {
     token: getToken(),
     access: ''
   },
+  getters: {
+  },
   mutations: {
     setAvator (state, avatorPath) {
       state.avatorImgPath = avatorPath

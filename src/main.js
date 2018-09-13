@@ -30,7 +30,7 @@ Vue.prototype.$config = config
 importDirective(Vue)
 
 /* eslint-disable no-new */
-new Vue({
+window.app = new Vue({
   el: '#app',
   router,
   i18n,

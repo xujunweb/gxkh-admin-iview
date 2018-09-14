@@ -36,3 +36,27 @@ export const getUserList = (data) => {
     method: 'post'
   })
 }
+// 修改指定配置信息
+export const updateAppointInfo = (key,value) => {
+  return axios.request({
+    url: 'mobile/dictionary/updateByKey',
+    data: {key:key,value:value},
+    method: 'post'
+  })
+}
+// 获取指定的配置信息
+export const getAppointInfo = (key) => {
+  return axios.request({
+    url: 'mobile/dictionary/getByKey',
+    data: {key:key},
+    method: 'post'
+  })
+}
+// 获取所有的配置信息
+export const getAllinfo = () => {
+  return axios.request({
+    url: 'mobile/dictionary/listByDictionary',
+    data: {},
+    method: 'post'
+  })
+}

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="system">
     <div class="title-h2">小程序轮播图</div>
     <div class="imgList moudel">
       <div class="demo-upload-list" v-for="item in uploadList">
@@ -37,7 +37,8 @@
     <div class="title-h2">计费设置</div>
     <div class="time moudel">
       <div class="item">
-        <span>每小时计费：</span><InputNumber :max="99" :min="1" v-model="money"></InputNumber>
+        <span>每小时计费：</span><InputNumber :max="99" :min="1" v-model="money" :disabled="disabled"></InputNumber>
+        <Button type="primary" @click="editMoney" class="button">{{disabled?'编辑':'保存'}}</Button>
       </div>
       <div class="item">
         <span>选时选项：</span>
@@ -52,7 +53,12 @@
         </Dropdown>
         <Button type="primary" @click="editOption" class="button">编辑</Button>
       </div>
-
+    </div>
+    <div class="block"></div>
+    <div class="title-h2">客服电话</div>
+    <div class="customer moudel">
+      <span>客服电话：</span><Input v-model="phone" :disabled="cusDisabled" style="width: 200px"></Input>
+      <Button type="primary" @click="editCustomer" class="button">{{cusDisabled?'编辑':'保存'}}</Button>
     </div>
     <Modal title="View Image" v-model="visible">
       <img :src="'https://o5wwk8baw.qnssl.com/' + imgName + '/large'" v-if="visible" style="width: 100%">
@@ -71,6 +77,7 @@
 
 <script>
 import Icons from '../../components/icons/icons'
+import { getAllinfo, updateAppointInfo } from  '@/api/user'
 export default {
   name: 'system',
   components: {Icons},
@@ -84,7 +91,10 @@ export default {
       edit: false,
       money: 2,
       timeList: [1, 2, 3, 4, 5, 6, 7],
-      newTimeList: []
+      newTimeList: [],
+      disabled:true,
+      phone:'',
+      cusDisabled:true
     }
   },
   created () {
@@ -94,6 +104,24 @@ export default {
     this.uploadList = this.$refs.upload.fileList
   },
   methods: {
+    //查询所有的配置信息
+    getAllinfo () {
+      getAllinfo().then(res => {
+        const data = res.data
+        console.log(res)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    //修改指定配置信息
+    updateAppointInfo (key,value) {
+      updateAppointInfo(key,value).then(res => {
+        const data = res.data
+        console.log(res)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
     // 编辑选项
     editOption () {
       this.edit = true
@@ -110,6 +138,20 @@ export default {
     // 确定添加
     okAdd () {
       this.timeList = JSON.parse(JSON.stringify(this.newTimeList))
+    },
+    //编辑计费
+    editMoney () {
+      if(!this.disabled){
+        console.log('发起请求保存')
+      }
+      this.disabled = !this.disabled
+    },
+    //编辑电话
+    editCustomer () {
+      if(!this.cusDisabled){
+        console.log('发起电话请求保存')
+      }
+      this.cusDisabled = !this.cusDisabled
     },
     handleView (name) {
       this.imgName = name
@@ -149,6 +191,9 @@ export default {
 </script>
 
 <style scoped lang="less">
+  .system{
+    padding-bottom: 50px;
+  }
   .title-h2{
     font-size: 16px;
     line-height: 60px;padding-left: 20px;
@@ -190,7 +235,17 @@ export default {
       }
     }
     .button{
-      height: 32px;margin-left:20px;
+      height: 32px;margin-left:20px;margin-bottom: 5px;
+    }
+  }
+  .customer{
+    display: flex;
+    span{
+      display: inline-block;width: 80px;text-align: right;
+      line-height: 32px;
+    }
+    .button{
+      margin-left: 15px;
     }
   }
   .demo-upload-list{

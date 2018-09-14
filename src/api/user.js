@@ -28,3 +28,11 @@ export const logout = (token) => {
     method: 'post'
   })
 }
+// 获取用户列表
+export const getUserList = (data) => {
+  return axios.request({
+    url: 'getUserList',
+    data: data,
+    method: 'post'
+  })
+}

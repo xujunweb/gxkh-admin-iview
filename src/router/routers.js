@@ -27,7 +27,7 @@ export default [
     redirect: '/home',
     component: Main,
     meta: {
-      hideInMenu: true,
+      hideInMenu: false,
       notCache: true
     },
     children: [
@@ -35,9 +35,10 @@ export default [
         path: '/home',
         name: 'home',
         meta: {
-          hideInMenu: true,
+          hideInMenu: false,
           title: '首页',
-          notCache: true
+          notCache: true,
+          icon:'md-home'
         },
         component: () => import('@/view/single-page/home')
       }
@@ -254,6 +255,25 @@ export default [
           title: '用户管理'
         },
         component: () => import('@/view/user/user.vue')
+      }
+    ]
+  },
+  {
+    path: '/system',
+    name: 'system',
+    meta: {
+      hide: true
+    },
+    component: Main,
+    children: [
+      {
+        path: 'system_page',
+        name: 'system_page',
+        meta: {
+          icon: 'md-settings',
+          title: '系统设置'
+        },
+        component: () => import('@/view/system/system.vue')
       }
     ]
   },

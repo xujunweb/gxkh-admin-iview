@@ -2,17 +2,15 @@
   <div class="system">
     <div class="title-h2">小程序轮播图</div>
     <div class="imgList moudel">
-      <div class="demo-upload-list" v-for="item in uploadList">
-        <template v-if="item.status === 'finished'">
-          <img :src="item.url">
+      <div class="demo-upload-list" v-for="(item,key) in uploadList">
+        <template v-if="!item.showProgress || item.showProgress == 100">
+          <img :src="item">
           <div class="demo-upload-list-cover">
-            <Icon type="ios-eye-outline" @click.native="handleView(item.name)" size="30"></Icon>
-            <Icon type="ios-trash-outline" @click.native="handleRemove(item)" size="30"></Icon>
+            <Icon type="ios-eye-outline" @click.native="handleView(item)" size="30"></Icon>
+            <Icon type="ios-trash-outline" @click.native="handleRemove(key)" size="30"></Icon>
           </div>
         </template>
-        <template v-else>
-          <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
-        </template>
+        <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
       </div>
       <Upload
         ref="upload"
@@ -26,7 +24,8 @@
         :before-upload="handleBeforeUpload"
         multiple
         type="drag"
-        action="https://baidu.com"
+        action="https://www.chmbkh.com/mobile/file/upload"
+        :headers="headers"
         style="display: inline-block;width:150px;">
         <div class="upload">
           <Icon type="ios-camera" size="40"></Icon>
@@ -61,7 +60,7 @@
       <Button type="primary" @click="editCustomer" class="button">{{cusDisabled?'编辑':'保存'}}</Button>
     </div>
     <Modal title="View Image" v-model="visible">
-      <img :src="'https://o5wwk8baw.qnssl.com/' + imgName + '/large'" v-if="visible" style="width: 100%">
+      <img :src="imgName" v-if="visible" style="width: 100%">
     </Modal>
     <Modal title="编辑选项" v-model="edit" @on-ok="okAdd">
       <div class="editOption">
@@ -83,6 +82,9 @@ export default {
   components: {Icons},
   data () {
     return {
+      headers:{
+        "ticket":app.$store.state.user.userId
+      },
       defaultList: [
       ],
       imgName: '',
@@ -99,6 +101,7 @@ export default {
   },
   created () {
     // 组件实例化生命周期
+    this.getAllinfo()
   },
   mounted () {
     this.uploadList = this.$refs.upload.fileList
@@ -108,7 +111,11 @@ export default {
     getAllinfo () {
       getAllinfo().then(res => {
         const data = res.data
-        console.log(res)
+        console.log('所有配置',res)
+        this.phone = data.data[0].value
+        this.money = +data.data[1].value
+        this.uploadList = data.data[2].value.split(',')
+        this.timeList = data.data[3].value.split(',')
       }).catch(err => {
         console.log(err)
       })
@@ -138,11 +145,13 @@ export default {
     // 确定添加
     okAdd () {
       this.timeList = JSON.parse(JSON.stringify(this.newTimeList))
+      this.updateAppointInfo('time_option',this.timeList.join(','))
     },
     //编辑计费
     editMoney () {
       if(!this.disabled){
         console.log('发起请求保存')
+        this.updateAppointInfo('unit_price',this.money)
       }
       this.disabled = !this.disabled
     },
@@ -150,6 +159,7 @@ export default {
     editCustomer () {
       if(!this.cusDisabled){
         console.log('发起电话请求保存')
+        this.updateAppointInfo('customer_service_phone',this.phone)
       }
       this.cusDisabled = !this.cusDisabled
     },
@@ -159,14 +169,20 @@ export default {
       this.visible = true
     },
     //删除图片
-    handleRemove (file) {
-      const fileList = this.$refs.upload.fileList
-      this.$refs.upload.fileList.splice(fileList.indexOf(file), 1)
+    handleRemove (key) {
+      // const fileList = this.$refs.upload.fileList
+      this.$refs.upload.fileList.splice(key, 1)
+      this.uploadList.splice(key, 1)
     },
     //上传成功
     handleSuccess (res, file) {
-      file.url = 'https://o5wwk8baw.qnssl.com/7eb99afb9d5f317c912f08b5212fd69a/avatar'
-      file.name = '7eb99afb9d5f317c912f08b5212fd69a'
+      console.log('上传成功-------',res,file)
+      for(let i=0,len=res.data.length;i<len;i++){
+        this.uploadList.push(res.data[i].url)
+      }
+      this.updateAppointInfo('carousel_img',this.uploadList.join(','))
+      // file.url = 'https://o5wwk8baw.qnssl.com/7eb99afb9d5f317c912f08b5212fd69a/avatar'
+      // file.name = '7eb99afb9d5f317c912f08b5212fd69a'
     },
     handleFormatError (file) {
       this.$Notice.warning({

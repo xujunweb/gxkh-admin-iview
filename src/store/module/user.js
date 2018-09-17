@@ -10,7 +10,7 @@ export default {
     access: ''
   },
   getters: {
-    getUserInfo (state) {
+    getUserLoginInfo (state) {
       return state.userId
     }
   },
@@ -34,15 +34,15 @@ export default {
   },
   actions: {
     // 登录
-    handleLogin ({ commit }, {userName, password}) {
-      userName = userName.trim()
+    handleLogin ({ commit }, {username, password}) {
+      username = username.trim()
       return new Promise((resolve, reject) => {
         login({
-          userName,
+          username,
           password
         }).then(res => {
           const data = res.data
-          commit('setToken', data.token)
+          commit('setToken', data.data.id)
           resolve()
         }).catch(err => {
           reject(err)

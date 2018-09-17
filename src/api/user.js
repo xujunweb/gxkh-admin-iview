@@ -1,12 +1,12 @@
 import axios from '@/libs/api.request'
 
-export const login = ({ userName, password }) => {
+export const login = ({ username, password }) => {
   const data = {
-    userName,
+    username,
     password
   }
   return axios.request({
-    url: 'login',
+    url: 'mobile/user/login',
     data,
     method: 'post'
   })
@@ -31,8 +31,11 @@ export const logout = (token) => {
 // 获取用户列表
 export const getUserList = (data) => {
   return axios.request({
-    url: 'getUserList',
+    url: 'mobile/user/pageByUser',
     data: data,
+    headers:{
+      "ticket":app.$store.state.user.userId
+    },
     method: 'post'
   })
 }
@@ -41,6 +44,9 @@ export const updateAppointInfo = (key,value) => {
   return axios.request({
     url: 'mobile/dictionary/updateByKey',
     data: {key:key,value:value},
+    headers:{
+      "ticket":app.$store.state.user.userId
+    },
     method: 'post'
   })
 }
@@ -49,7 +55,10 @@ export const getAppointInfo = (key) => {
   return axios.request({
     url: 'mobile/dictionary/getByKey',
     data: {key:key},
-    method: 'post'
+    method: 'post',
+    headers:{
+      "ticket":app.$store.state.user.userId
+    }
   })
 }
 // 获取所有的配置信息
@@ -57,6 +66,9 @@ export const getAllinfo = () => {
   return axios.request({
     url: 'mobile/dictionary/listByDictionary',
     data: {},
-    method: 'post'
+    method: 'post',
+    headers:{
+      "ticket":app.$store.state.user.userId
+    }
   })
 }

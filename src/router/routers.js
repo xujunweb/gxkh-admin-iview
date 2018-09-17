@@ -240,21 +240,21 @@ export default [
   //   ]
   // },
   {
-    path: '/user',
-    name: 'user',
+    path: '/userlist',
+    name: 'userlist',
     meta: {
       hide: true
     },
     component: Main,
     children: [
       {
-        path: 'user_page',
-        name: 'user_page',
+        path: 'userlist_page',
+        name: 'userlist_page',
         meta: {
           icon: 'md-person',
           title: '用户管理'
         },
-        component: () => import('@/view/user/user.vue')
+        component: () => import('@/view/userlist/userlist.vue')
       }
     ]
   },

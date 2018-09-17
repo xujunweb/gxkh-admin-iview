@@ -89,7 +89,7 @@ export default {
         },
         {
           title: '手机号',
-          key: 'phone'
+          key: 'telphone'
         },
         {
           title: '余额',
@@ -97,7 +97,7 @@ export default {
         },
         {
           title: '注册时间',
-          key: 'insertTime'
+          key: 'register_time'
         },
         {
           title: '操作',
@@ -127,21 +127,21 @@ export default {
       tableData: [
         {
           weix: 'John Brown',
-          phone: 13330116209,
+          telphone: 13330116209,
           money: '12.00',
-          insertTime: '2018-09-14'
+          register_time: '2018-09-14'
         },
         {
           weix: 'John Brown',
-          phone: 13330116209,
+          telphone: 13330116209,
           money: '12.00',
-          insertTime: '2018-09-14'
+          register_time: '2018-09-14'
         },
         {
           weix: 'John Brown',
-          phone: 13330116209,
+          telphone: 13330116209,
           money: '12.00',
-          insertTime: '2018-09-14'
+          register_time: '2018-09-14'
         }
       ]
     }
@@ -150,6 +150,7 @@ export default {
   },
   created () {
     // 组件实例化生命周期
+    this.getUserList(1)
   },
   methods: {
     renderFormat (label) {
@@ -157,7 +158,8 @@ export default {
     },
     // 请求用户列表
     getUserList (p) {
-      getUserList({p: p, pageSize: this.pageSize, page: 5}).then(res => {
+      getUserList({pageNum: p, pageSize: this.pageSize,type:0}).then(res => {
+        console.log('用户列表----',res)
         const data = res.data
         console.log(res)
       }).catch(err => {

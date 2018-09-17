@@ -12,10 +12,9 @@ class HttpRequest {
     const config = {
       baseURL: this.baseUrl,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json',
+        // 'Access-Control-Allow-Origin': '*',
+        // 'Content-Type': 'application/json'
       },
-      withCredentials: true,
     }
     return config
   }

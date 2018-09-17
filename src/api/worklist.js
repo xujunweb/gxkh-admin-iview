@@ -1,4 +1,3 @@
-import {mapGetters} from 'vuex'
 import axios from '@/libs/api.request'
 export const getWorkList = ({pageNum, pageSize, type = '', device_no, fault_type = ''}) => {
   return axios.request({
@@ -9,7 +8,10 @@ export const getWorkList = ({pageNum, pageSize, type = '', device_no, fault_type
       type,
       device_no,
       fault_type,
-      user_id:mapGetters({'infor':'getUserInfo'}).infor
+      user_id:app.$store.state.user.userId
+    },
+    headers:{
+      "ticket":app.$store.state.user.userId
     },
     method: 'post'
   })

@@ -1,9 +1,9 @@
 <template>
   <div class="worklist">
-    <Table border ref="selection" :columns="columns4" :data="data1" stripe class="table"></Table>
+    <Table border ref="selection" :columns="columns" :data="datalist" stripe class="table"></Table>
     <Button @click="handleSelectAll(true)">标记已处理</Button>
     <div class="page">
-      <Page :total="100" show-total show-elevator :page-size="pageSize" @on-change="pageSwitch" />
+      <Page :total="total" show-total show-elevator :page-size="pageSize" @on-change="pageSwitch" />
     </div>
     <Modal title="View Image" v-model="visible">
       <img :src="imgName" v-if="visible" style="width: 100%">
@@ -20,13 +20,14 @@ export default {
       pageSize:20,
       visible: false,
       imgName:'',
+      total:1,
       faultMap:{
         0:'其他',
         1:'床坏了',
         2:'锁坏了',
         3:'还床失败'
       },
-      columns4: [
+      columns: [
         {
           type: 'selection',
           width: 60,
@@ -79,7 +80,7 @@ export default {
           key: 'result'
         }
       ],
-      data1: [
+      datalist: [
         {
           device_no: '5658788',
           fault_type: '1',
@@ -140,7 +141,8 @@ export default {
         pageSize:20
       }
       getWorkList(data).then((res)=>{
-        console.log(res)
+        console.log('故障列表-----',res)
+        this.total = res.data.data.total
       })
     }
   }

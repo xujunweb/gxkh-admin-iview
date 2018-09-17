@@ -1,5 +1,8 @@
 import axios from 'axios'
 // import { Spin } from 'iview'
+axios.defaults.withCredentials = true
+axios.defaults.headers.post['Content-Type'] = 'application/json'
+axios.defaults.timeout = 25000
 class HttpRequest {
   constructor (baseUrl = baseURL) {
     this.baseUrl = baseUrl
@@ -9,8 +12,10 @@ class HttpRequest {
     const config = {
       baseURL: this.baseUrl,
       headers: {
-        //
-      }
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json',
+      },
+      withCredentials: true,
     }
     return config
   }

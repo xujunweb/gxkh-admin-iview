@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import { getWorkList } from '@/api/worklist'
 export default {
   name: "worklist",
   data () {
@@ -118,7 +119,7 @@ export default {
     }
   },
   created () {
-
+    this.getWorkList()
   },
   methods: {
     handleSelectAll (status) {
@@ -132,6 +133,16 @@ export default {
       this.imgName = name
       this.visible = true
     },
+    //查询故障列表
+    getWorkList () {
+      let data = {
+        pageNum:1,
+        pageSize:20
+      }
+      getWorkList(data).then((res)=>{
+        console.log(res)
+      })
+    }
   }
 }
 </script>

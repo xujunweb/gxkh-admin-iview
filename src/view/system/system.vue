@@ -153,14 +153,17 @@ export default {
       }
       this.cusDisabled = !this.cusDisabled
     },
+    //查看大图
     handleView (name) {
       this.imgName = name
       this.visible = true
     },
+    //删除图片
     handleRemove (file) {
       const fileList = this.$refs.upload.fileList
       this.$refs.upload.fileList.splice(fileList.indexOf(file), 1)
     },
+    //上传成功
     handleSuccess (res, file) {
       file.url = 'https://o5wwk8baw.qnssl.com/7eb99afb9d5f317c912f08b5212fd69a/avatar'
       file.name = '7eb99afb9d5f317c912f08b5212fd69a'

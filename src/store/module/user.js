@@ -10,6 +10,9 @@ export default {
     access: ''
   },
   getters: {
+    getUserInfo (state) {
+      return state.userId
+    }
   },
   mutations: {
     setAvator (state, avatorPath) {

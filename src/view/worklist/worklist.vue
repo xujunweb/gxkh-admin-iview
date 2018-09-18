@@ -132,7 +132,11 @@ export default {
     //标记处理
     handleSelectAll () {
       // this.$refs.selection.selectAll(status);
-      updateWork({id:[]}).then(res => {
+      let ids = []
+      for(let i = 0,sel;sel = this.selecArry[i];i++){
+        ids.push(sel.id)
+      }
+      updateWork({id:ids}).then(res => {
         console.log('处理结果------res',)
         this.$Message.success('操作成功!')
         this.getWorkList(this.thispage)

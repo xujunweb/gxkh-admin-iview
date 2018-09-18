@@ -1,6 +1,12 @@
 <template>
   <div class="worklist">
-    <Table border ref="selection" :columns="columns" :data="datalist" stripe class="table"></Table>
+    <div class="search-div">
+      <span>处理结果：</span>
+      <Select v-model="type" style="width:100px" @on-change="selecChange">
+        <Option v-for="item in typeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+      </Select>
+    </div>
+    <Table border ref="selection" :columns="columns" :data="datalist" stripe class="table" @on-selection-change="selectionChange" ></Table>
     <Button @click="handleSelectAll(true)">标记已处理</Button>
     <div class="page">
       <Page :total="total" show-total show-elevator :page-size="pageSize" @on-change="pageSwitch" />
@@ -12,7 +18,7 @@
 </template>
 
 <script>
-import { getWorkList } from '@/api/worklist'
+import { getWorkList, updateWork } from '@/api/worklist'
 export default {
   name: "worklist",
   data () {
@@ -21,6 +27,14 @@ export default {
       visible: false,
       imgName:'',
       total:1,
+      thispage:1,
+      type:'',      //处理结果
+      typeList: [
+        {value:'',label:'全部'},
+        {value:'0',label:'未处理'},
+        {value:'1',label:'已处理'}
+      ],
+      selecArry:[], //选中项
       faultMap:{
         0:'其他',
         1:'床坏了',
@@ -55,20 +69,23 @@ export default {
           render: (h, params) => {
             var imgs = []
             console.log(params)
-            for(let i =0,len=params.row.imgs.length;i<len;i++){
-              imgs.push(h('img', {
-                attrs : {
-                  src:params.row.imgs[i]
-                },
-                style: {
-                  marginRight: '5px', width:'45px', height:'50px', cursor:'pointer', float:'left', margin:'5px'
-                },
-                on: {
-                  click: () => {
-                    this.handleView(params.row.imgs[i])
+            if(params.row.imgs){
+              let oldimgs = params.row.imgs.split(',')
+              for(let i =0,len=oldimgs.length;i<len;i++){
+                imgs.push(h('img', {
+                  attrs : {
+                    src:oldimgs[i]
+                  },
+                  style: {
+                    marginRight: '5px', width:'45px', height:'50px', cursor:'pointer', float:'left', margin:'5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.handleView(oldimgs[i])
+                    }
                   }
-                }
-              }))
+                }))
+              }
             }
             return h('div',imgs)
           }
@@ -77,71 +94,76 @@ export default {
           title: '是否处理',
           width:100,
           align: 'center',
-          key: 'result'
+          key: 'result',
+          render: (h, params) => {
+            return h('div', params.row.type?'已处理':'未处理')
+          }
         }
       ],
-      datalist: [
-        {
-          device_no: '5658788',
-          fault_type: '1',
-          desc: '我关锁的时候莫名其妙就关不上了',
-          result: '未处理',
-          imgs:[
-            'https://gss0.bdstatic.com/70cFfyinKgQIm2_p8IuM_a/daf/pic/item/d833c895d143ad4b164d6bea8f025aafa40f06bc.jpg',
-            'https://gss0.bdstatic.com/70cFfyinKgQIm2_p8IuM_a/daf/pic/item/d833c895d143ad4b164d6bea8f025aafa40f06bc.jpg',
-            'https://gss0.bdstatic.com/70cFfyinKgQIm2_p8IuM_a/daf/pic/item/d833c895d143ad4b164d6bea8f025aafa40f06bc.jpg',
-            'https://gss0.bdstatic.com/70cFfyinKgQIm2_p8IuM_a/daf/pic/item/d833c895d143ad4b164d6bea8f025aafa40f06bc.jpg',
-            'https://gss0.bdstatic.com/70cFfyinKgQIm2_p8IuM_a/daf/pic/item/d833c895d143ad4b164d6bea8f025aafa40f06bc.jpg',
-            'https://gss0.bdstatic.com/70cFfyinKgQIm2_p8IuM_a/daf/pic/item/d833c895d143ad4b164d6bea8f025aafa40f06bc.jpg'
-          ]
-        },
-        {
-          device_no: '5658788',
-          fault_type: '1',
-          desc: '我关锁的时候莫名其妙就关不上了',
-          result: '未处理',
-          imgs:[]
-        },
-        {
-          device_no: '5658788',
-          fault_type: '1',
-          desc: '我关锁的时候莫名其妙就关不上了',
-          result: '未处理',
-          imgs:[]
-        },
-        {
-          device_no: '5658788',
-          fault_type: '1',
-          desc: '我关锁的时候莫名其妙就关不上了',
-          result: '未处理',
-          imgs:[]
-        },
-      ]
+      datalist: []
     }
   },
   created () {
-    this.getWorkList()
+    this.getWorkList(1)
   },
   methods: {
-    handleSelectAll (status) {
-      this.$refs.selection.selectAll(status);
+    //请求loading
+    loading () {
+      this.$Spin.show({
+        render: (h) => {
+          return h('div', [
+            h('Icon', {
+              'class': 'demo-spin-icon-load',
+              props: {
+                type: 'ios-loading',
+                size: 18
+              }
+            }),
+            h('div', 'Loading')
+          ])
+        }
+      })
+    },
+    //选中项发生变化
+    selectionChange (selec) {
+      console.log(selec)
+      this.selecArry = selec
+    },
+    //标记处理
+    handleSelectAll () {
+      // this.$refs.selection.selectAll(status);
+      updateWork({id:[]}).then(res => {
+        console.log('处理结果------res',)
+        this.$Message.success('操作成功!')
+        this.getWorkList(this.thispage)
+      }).catch(err => {
+        this.$Message.error('操作失败!')
+      })
+    },
+    //下拉改变
+    selecChange () {
+      this.getWorkList(1)
     },
     // 分页切换
     pageSwitch (page) {
       console.log(page)
+      this.thispage = page
+      this.getWorkList(page)
     },
     handleView (name) {
       this.imgName = name
       this.visible = true
     },
     //查询故障列表
-    getWorkList () {
+    getWorkList (p) {
       let data = {
-        pageNum:1,
-        pageSize:20
+        pageNum:p,
+        pageSize:20,
+        type:this.type
       }
       getWorkList(data).then((res)=>{
         console.log('故障列表-----',res)
+        this.datalist = res.data.data.list
         this.total = res.data.data.total
       })
     }
@@ -154,7 +176,7 @@ export default {
     padding: 18px;padding-bottom: 50px;
   }
   .table{
-    margin-bottom: 15px;
+    margin-bottom: 15px;margin-top: 15px;
   }
   .page{
     margin-top: 30px;text-align: right;

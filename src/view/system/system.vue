@@ -7,7 +7,7 @@
           <img :src="item">
           <div class="demo-upload-list-cover">
             <Icon type="ios-eye-outline" @click.native="handleView(item)" size="30"></Icon>
-            <Icon type="ios-trash-outline" @click.native="handleRemove(key)" size="30"></Icon>
+            <Icon type="ios-trash-outline" @click.native="showRemove(key)" size="30"></Icon>
           </div>
         </template>
         <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
@@ -71,6 +71,9 @@
         <Button type="primary" class="button" @click="addOption">添加</Button>
       </div>
     </Modal>
+    <Modal title="删除图片" v-model="remove" class-name="vertical-center-modal" @on-ok="handleRemove">
+      <p>是否确定删除图片？</p>
+    </Modal>
   </div>
 </template>
 
@@ -85,13 +88,15 @@ export default {
       headers:{
         "ticket":app.$store.state.user.userId
       },
+      remove:false,
+      removeKey:0,
       defaultList: [
       ],
       imgName: '',
       visible: false,
       uploadList: [],
       edit: false,
-      money: 2,
+      money: 0,
       timeList: [1, 2, 3, 4, 5, 6, 7],
       newTimeList: [],
       disabled:true,
@@ -107,16 +112,36 @@ export default {
     this.uploadList = this.$refs.upload.fileList
   },
   methods: {
+    //请求loading
+    loading () {
+      this.$Spin.show({
+        render: (h) => {
+          return h('div', [
+            h('Icon', {
+              'class': 'demo-spin-icon-load',
+              props: {
+                type: 'ios-loading',
+                size: 18
+              }
+            }),
+            h('div', 'Loading')
+          ])
+        }
+      })
+    },
     //查询所有的配置信息
     getAllinfo () {
+      this.loading()
       getAllinfo().then(res => {
         const data = res.data
         console.log('所有配置',res)
         this.phone = data.data[0].value
-        this.money = +data.data[1].value
+        this.money = +((data.data[1].value)/100)
         this.uploadList = data.data[2].value.split(',')
         this.timeList = data.data[3].value.split(',')
+        this.$Spin.hide()
       }).catch(err => {
+        this.$Spin.hide()
         console.log(err)
       })
     },
@@ -151,7 +176,7 @@ export default {
     editMoney () {
       if(!this.disabled){
         console.log('发起请求保存')
-        this.updateAppointInfo('unit_price',this.money)
+        this.updateAppointInfo('unit_price',this.money*100)
       }
       this.disabled = !this.disabled
     },
@@ -168,11 +193,17 @@ export default {
       this.imgName = name
       this.visible = true
     },
+    //删除弹窗
+    showRemove (key) {
+      this.removeKey = key
+      this.remove = true
+    },
     //删除图片
-    handleRemove (key) {
+    handleRemove () {
       // const fileList = this.$refs.upload.fileList
-      this.$refs.upload.fileList.splice(key, 1)
-      this.uploadList.splice(key, 1)
+      this.$refs.upload.fileList.splice(this.removeKey, 1)
+      this.uploadList.splice(this.removeKey, 1)
+      this.updateAppointInfo('carousel_img',this.uploadList.join(','))
     },
     //上传成功
     handleSuccess (res, file) {
@@ -181,8 +212,6 @@ export default {
         this.uploadList.push(res.data[i].url)
       }
       this.updateAppointInfo('carousel_img',this.uploadList.join(','))
-      // file.url = 'https://o5wwk8baw.qnssl.com/7eb99afb9d5f317c912f08b5212fd69a/avatar'
-      // file.name = '7eb99afb9d5f317c912f08b5212fd69a'
     },
     handleFormatError (file) {
       this.$Notice.warning({
@@ -210,6 +239,18 @@ export default {
 </script>
 
 <style scoped lang="less">
+  .demo-spin-icon-load{
+    animation: ani-demo-spin 1s linear infinite;
+  }
+  .vertical-center-modal{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .ivu-modal{
+      top: 0;
+    }
+  }
   .system{
     padding-bottom: 50px;
   }

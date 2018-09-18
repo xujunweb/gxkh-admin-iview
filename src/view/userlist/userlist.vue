@@ -19,7 +19,7 @@
       </div>
       <Table border :columns="columns" :data="tableData" stripe ref="userTable"></Table>
       <div class="page">
-        <Page :total="100" show-total show-elevator :page-size="pageSize" @on-change="pageSwitch" />
+        <Page :total="total" show-total show-elevator :page-size="pageSize" @on-change="pageSwitch" />
       </div>
       <a id="hrefToExportTable" style="postion: absolute;left: -10px;top: -10px;width: 0px;height: 0px;"></a>
     </div>
@@ -34,11 +34,12 @@ export default {
   },
   data () {
     return {
+      total:0,
       formInline: {
         phone: '',
         date: ''
       },
-      pageSize: 8,
+      pageSize: 15,
       ruleInline: {
         phone: [
           // { required: true, message: 'Please fill in the password.', trigger: 'blur' },
@@ -93,7 +94,10 @@ export default {
         },
         {
           title: '余额',
-          key: 'money'
+          key: 'money',
+          render:(h, params)=>{
+            return h('div',(params.row.money/100).toFixed(2))
+          }
         },
         {
           title: '注册时间',
@@ -124,26 +128,7 @@ export default {
           }
         }
       ],
-      tableData: [
-        {
-          weix: 'John Brown',
-          telphone: 13330116209,
-          money: '12.00',
-          register_time: '2018-09-14'
-        },
-        {
-          weix: 'John Brown',
-          telphone: 13330116209,
-          money: '12.00',
-          register_time: '2018-09-14'
-        },
-        {
-          weix: 'John Brown',
-          telphone: 13330116209,
-          money: '12.00',
-          register_time: '2018-09-14'
-        }
-      ]
+      tableData: []
     }
   },
   computed: {
@@ -158,19 +143,29 @@ export default {
     },
     // 请求用户列表
     getUserList (p) {
-      getUserList({pageNum: p, pageSize: this.pageSize,type:0}).then(res => {
-        console.log('用户列表----',res)
-        const data = res.data
-        console.log(res)
-      }).catch(err => {
-        console.log(err)
+      return new Promise((resolve, reject)=>{
+        getUserList({pageNum: p, pageSize: this.pageSize,type:0,telphone:this.formInline.phone}).then(res => {
+          console.log('用户列表----',res)
+          const data = res.data
+          this.tableData = res.data.data.list
+          this.total = res.data.data.total
+          resolve(res.data)
+          console.log(res)
+        }).catch(err => {
+          reject(err)
+          console.log(err)
+        })
       })
     },
     // 发起搜索
     handleSubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
-          this.$Message.success('Success!')
+          this.getUserList(1).then((res)=>{
+            this.$Message.success('操作成功!')
+          }).catch(err => {
+            this.$Message.error('操作失败!')
+          })
         } else {
           this.$Message.error('Fail!')
         }
@@ -198,6 +193,7 @@ export default {
     // 分页切换
     pageSwitch (page) {
       console.log(page)
+      this.getUserList(page)
     },
     // 导出excel
     exportExcel () {

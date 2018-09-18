@@ -160,6 +160,18 @@ let filters = {
     } else {
       return value
     }
+  },
+  formatMoney (money) {
+    if (money == 0) return '0'
+    money = money/100
+    money = (+money)
+    //money = money.replace(/\d{1,3}(?=(\d{3})+(?!\d))/g, '$&,');
+    return money.toString()
+  },
+  formatTwo (money) {
+    if (!money) return '0.00'
+    money = (+money).toFixed(2)
+    return money
   }
 }
 export default {
@@ -167,5 +179,6 @@ export default {
     for (let i in filters) {
       Vue.filter(i, filters[i])
     }
-  }
+  },
+  filters:filters
 }

@@ -5,10 +5,14 @@ import store from '@/store'
 import iView from 'iview'
 import { getToken, canTurnTo } from '@/libs/util'
 
+const BASE_URL = process.env.NODE_ENV === 'production'
+  ? '/pc/'
+  : '/'
 Vue.use(Router)
 const router = new Router({
   routes,
-  mode: 'history'
+  mode: 'history',
+  base: BASE_URL
 })
 const LOGIN_PAGE_NAME = 'login'
 

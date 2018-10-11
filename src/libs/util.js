@@ -272,6 +272,7 @@ export const showByAccess = (access, canViewAccess) => {
   return hasOneOf(canViewAccess, access)
 }
 
+
 /**
  * @description 根据name/params/query判断两个路由对象是否相等
  * @param {*} route1 路由对象

@@ -29,27 +29,27 @@
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
 import InforCard from '_c/info-card'
 import CountTo from '_c/count-to'
-import { ChartPie, ChartBar } from '_c/charts'
-import Example from './example.vue'
+// import { ChartPie, ChartBar } from '_c/charts'
+// import Example from './example.vue'
 export default {
   name: 'home',
   components: {
     InforCard,
     CountTo,
-    ChartPie,
-    ChartBar,
-    Example
+    // ChartPie,
+    // ChartBar,
+    // Example
   },
   data () {
     return {
       inforCardData: [
-        { title: '新增用户', icon: 'md-person-add', count: 803, color: '#2d8cf0' },
-        { title: '累计点击', icon: 'md-locate', count: 23432, color: '#19be6b' },
-        { title: '新增问答', icon: 'md-help-circle', count: 142, color: '#ff9900' },
-        { title: '分享统计', icon: 'md-share', count: 657, color: '#ed3f14' },
-        { title: '新增互动', icon: 'md-chatbubbles', count: 12, color: '#E46CBB' }
+        { title: '总用户量', icon: 'md-person-add', count: 0, color: '#2d8cf0' },
+        { title: '总订单数', icon: 'md-reorder', count: 0, color: '#19be6b' },
+        { title: '在用设备数', icon: 'md-cog', count: 0, color: '#ff9900' },
+        { title: '使用总时间(h)', icon: 'md-clock', count: 0, color: '#ed3f14' }
       ],
       pieData: [
         {value: 335, name: '直接访问'},
@@ -69,8 +69,25 @@ export default {
       }
     }
   },
+  computed:{
+    ...mapGetters({
+      'indexData':'getIndexData'
+    })
+  },
+  created(){
+    this.$store.dispatch('getIndexData').then(()=>{
+      console.log('获取到的首页数据----',this.indexData)
+      this.inforCardData[0].count = this.indexData.total_user
+      this.inforCardData[1].count = this.indexData.total_order
+      this.inforCardData[2].count = this.indexData.total_use_device
+      this.inforCardData[3].count = this.indexData.total_time/60/60
+    })
+  },
   mounted () {
     //
+  },
+  methods:{
+
   }
 }
 </script>

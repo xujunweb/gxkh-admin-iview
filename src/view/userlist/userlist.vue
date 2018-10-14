@@ -2,10 +2,10 @@
     <div class="userlist">
       <div class="search-div">
         <Form ref="formInline" :model="formInline" :rules="ruleInline" inline>
-          <FormItem prop="date">
-            <span>注册时间：</span>
-            <DatePicker type="datetimerange" v-model="formInline.date" :options="dateoptions" @on-change="changeDate" format="yyyy-MM-dd HH:mm" placeholder="请选择注册时间" style="width: 300px"></DatePicker>
-          </FormItem>
+          <!--<FormItem prop="date">-->
+            <!--<span>注册时间：</span>-->
+            <!--<DatePicker type="datetimerange" v-model="formInline.date" :options="dateoptions" @on-change="changeDate" format="yyyy-MM-dd HH:mm" placeholder="请选择注册时间" style="width: 300px"></DatePicker>-->
+          <!--</FormItem>-->
           <FormItem prop="phone">
             <span>手机号：</span>
             <Input v-model="formInline.phone" placeholder="请输入手机号" number clearable style="width: 200px" />
@@ -15,7 +15,7 @@
             <Button @click="handleReset('formInline')" style="margin-left: 8px">清除条件</Button>
           </FormItem>
         </Form>
-        <Button size="large" icon="ios-download-outline" type="primary" @click="exportExcel">导出表格</Button>
+        <!--<Button size="large" icon="ios-download-outline" type="primary" @click="exportExcel">导出表格</Button>-->
       </div>
       <Table border :columns="columns" :data="tableData" stripe ref="userTable"></Table>
       <div class="page">
@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import table2excel from '@/libs/table2excel.js'
+// import table2excel from '@/libs/table2excel.js'
 import { getUserList } from '@/api/user'
 export default {
   name: 'userlist',
@@ -79,25 +79,36 @@ export default {
         ]
       },
       columns: [
-        {
-          title: '微信账号',
-          key: 'weix',
-          render: (h, params) => {
-            return h('div', [
-              h('strong', params.row.weix)
-            ])
-          }
-        },
+        // {
+        //   title: '微信账号',
+        //   key: 'weix',
+        //   render: (h, params) => {
+        //     return h('div', [
+        //       h('strong', params.row.weix)
+        //     ])
+        //   }
+        // },
         {
           title: '手机号',
           key: 'telphone'
         },
         {
-          title: '余额',
+          title: '使用总时间',
+          key: 'total_time',
+          render: (h, params) => {
+            return h('div', (params.row.total_time/60/60).toFixed(2)+'h')
+          }
+        },
+        {
+          title: '用户余额',
           key: 'money',
           render:(h, params)=>{
             return h('div',(params.row.money/100).toFixed(2))
           }
+        },
+        {
+          title: '用户积分',
+          key: 'score'
         },
         {
           title: '注册时间',
@@ -180,10 +191,11 @@ export default {
     show (index) {
       this.$Modal.info({
         title: '用户信息',
-        content: `微信号：${this.tableData[index].weix}<br>
-        手机号：${this.tableData[index].phone}<br>
-        注册时间：${this.tableData[index].insertTime}<br>
-        余额：${this.tableData[index].money}
+        content: `手机号：${this.tableData[index].telphone}<br>
+        使用总时间：${(this.tableData[index].total_time/60/60).toFixed(2)}h<br>
+        注册时间：${this.tableData[index].register_time}<br>
+        用户余额：${(this.tableData[index].money/100).toFixed(2)}<br>
+        用户积分：${this.tableData[index].score}
         `
       })
     },

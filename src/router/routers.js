@@ -278,6 +278,25 @@ export default [
     ]
   },
   {
+    path: '/orderList',
+    name: 'orderList',
+    meta: {
+      hide: true
+    },
+    component: Main,
+    children: [
+      {
+        path: 'orderList_page',
+        name: 'orderList_page',
+        meta: {
+          icon: 'md-reorder',
+          title: '订单管理'
+        },
+        component: () => import('@/view/orderlist/orderlist.vue')
+      }
+    ]
+  },
+  {
     path: '/workList',
     name: 'workList',
     meta: {

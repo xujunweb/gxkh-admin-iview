@@ -12,13 +12,14 @@
 
 <script>
 import './user.less'
+import defaultAvator from '@/assets/images/defaultAvator.png'
 import { mapActions } from 'vuex'
 export default {
   name: 'User',
   props: {
     userAvator: {
       type: String,
-      default: ''
+      default: defaultAvator
     }
   },
   methods: {

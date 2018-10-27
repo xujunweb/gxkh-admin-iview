@@ -297,6 +297,25 @@ export default [
     ]
   },
   {
+    path: '/devicelist',
+    name: 'devicelist',
+    meta: {
+      hide: true
+    },
+    component: Main,
+    children: [
+      {
+        path: 'devicelist_page',
+        name: 'devicelist_page',
+        meta: {
+          icon: 'md-cog',
+          title: '设备管理'
+        },
+        component: () => import('@/view/devicelist/devicelist.vue')
+      }
+    ]
+  },
+  {
     path: '/workList',
     name: 'workList',
     meta: {

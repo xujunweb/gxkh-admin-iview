@@ -9,10 +9,10 @@ export const getWorkList = ({pageNum, pageSize, type = '', device_no, fault_type
       type,
       device_no,
       fault_type,
-      user_id:app.$store.state.user.userId
+      user_id:app.$store.state.user.token
     },
     headers:{
-      "ticket":app.$store.state.user.userId
+      "ticket":app.$store.state.user.token
     },
     method: 'post'
   })
@@ -25,7 +25,7 @@ export const updateWork = ({id}) => {
       id,
     },
     headers:{
-      "ticket":app.$store.state.user.userId
+      "ticket":app.$store.state.user.token
     },
     method: 'post'
   })

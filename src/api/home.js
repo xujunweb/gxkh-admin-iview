@@ -5,7 +5,7 @@ export const getIndexData = () => {
     url: 'mobile/home/indexData',
     data: {},
     headers:{
-      "ticket":app.$store.state.user.userId
+      "ticket":app.$store.state.user.token
     },
     method: 'post'
   })

@@ -251,6 +251,7 @@ export default [
         path: 'userlist_page',
         name: 'userlist_page',
         meta: {
+          access: ['admin'],
           icon: 'md-person',
           title: '用户管理'
         },

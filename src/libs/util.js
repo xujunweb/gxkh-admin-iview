@@ -14,7 +14,14 @@ export const getToken = () => {
   if (token) return token
   else return false
 }
-
+export const setCookies = (key,value)=>{
+  Cookies.set(key, value, {expires: config.cookieExpires || 1})
+}
+export const getCookies = (key)=>{
+  const value = Cookies.get(key)
+  if (value) return value
+  else return false
+}
 export const hasChild = (item) => {
   return item.children && item.children.length !== 0
 }

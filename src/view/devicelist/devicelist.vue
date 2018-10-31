@@ -22,6 +22,10 @@
           <span>锁MAC：</span>
           <Input v-model="formInline.lock_mac" placeholder="请输入锁MAC" number clearable style="width: 200px" />
         </FormItem>
+        <FormItem prop="hospital" class="search-item">
+          <span>锁所属医院：</span>
+          <Input v-model="formInline.hospital" placeholder="请输入医院" number clearable style="width: 200px" />
+        </FormItem>
         <FormItem prop="state" class="search-item">
           <span>锁状态：</span>
           <Select v-model="formInline.state" style="width:200px">
@@ -50,12 +54,21 @@
       <Page :total="total" show-total show-elevator :page-size="pageSize" @on-change="pageSwitch" />
     </div>
     <a id="hrefToExportTable" style="postion: absolute;left: -10px;top: -10px;width: 0px;height: 0px;"></a>
+    <Modal
+      v-model="showEdit"
+      title="编辑锁信息"
+      @on-ok="updateDevice"
+      @on-cancel="cancel">
+      <h3>锁二维码编号：{{this.tableData[this.selectIndex].qr_code_no}}</h3>
+      <div class="input-item"><span>用户ID：</span><Input v-model="inputUserId" placeholder="请输入用户ID" style="width: 200px" /></div>
+      <div class="input-item"><span>绑定医院：</span><Input v-model="hospital" placeholder="请输入医院" style="width: 200px" /></div>
+    </Modal>
   </div>
 </template>
 
 <script>
   // import table2excel from '@/libs/table2excel.js'
-  import { getDeviceList } from '@/api/devicelist'
+  import { getDeviceList,updateDevice } from '@/api/devicelist'
   export default {
     name: 'devicelist',
     components: {
@@ -63,12 +76,15 @@
     data () {
       return {
         total:0,
+        inputUserId:'', //绑定的用户ID
+        hospital:'',  //绑定的医院
         formInline: {
           lock_no: '',
           qr_code_no:'',  //二维码编号
           device_no:'',   //柜子编号
           lock_mac:'',  //锁mac地址
           state:'',     //锁状态
+          hospital:'',  //锁所属医院
         },
         stateList:[
           {value:'',label:'全部'},
@@ -84,6 +100,8 @@
           3:'使用中'
         },
         pageSize: 15,
+        showEdit:false,
+        selectIndex:0,     //选中的索引
         ruleInline: {
           user_id: [
             // { required: true, message: 'Please fill in the password.', trigger: 'blur' },
@@ -117,8 +135,8 @@
             key: 'lock_mac'
           },
           {
-            title: '锁地址',
-            key: 'address'
+            title: '锁所属医院',
+            key: 'hospital'
           },
           {
             title: '锁状态',
@@ -127,8 +145,54 @@
               return h('div', this.stateMap[params.row.state])
             }
           },
+          {
+            title: '操作',
+            key: 'action',
+            width: 150,
+            align: 'center',
+            render: (h, params) => {
+              if(app.$store.state.user.token == '100000000'){
+                return h('div', [
+                  h('Button', {
+                    props: {
+                      type: 'primary',
+                      size: 'small'
+                    },
+                    style: {
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.selectIndex = params.index
+                        this.showEdit = true
+                        this.inputUserId = this.tableData[params.index].user_id
+                        this.hospital = this.tableData[params.index].hospital
+                      }
+                    }
+                  }, '编辑信息')
+                ])
+              }else {
+                return h('div', [
+                  h('Button', {
+                    props: {
+                      type: 'primary',
+                      size: 'small'
+                    },
+                    style: {
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.show(params.index)
+                      }
+                    }
+                  }, '查看')
+                ])
+              }
+            }
+          }
         ],
-        tableData: []
+        tableData: [{}]
       }
     },
     computed: {
@@ -195,6 +259,37 @@
           }
         })
       },
+      //编辑锁信息
+      updateDevice(){
+        var data = {
+          id:this.tableData[this.selectIndex].id,
+          user_id:this.inputUserId,
+          hospital:this.hospital
+        }
+        updateDevice(data).then((res)=>{
+          console.log('编辑锁信息--------',res)
+          if(res.data.code === 100){
+            this.tableData[this.selectIndex].user_id = this.inputUserId
+            this.tableData[this.selectIndex].hospital = this.hospital
+            this.$Message.success('操作成功!')
+          }
+        }).catch(err => {
+          this.$Message.error('操作失败!')
+        })
+      },
+      //关闭弹窗
+      cancel(){
+        this.showEdit = false
+      },
+      show (index) {
+        this.$Modal.info({
+          title: '锁信息',
+          content: `锁二维码：${this.tableData[index].qr_code_no}<br>
+        锁密码：${this.tableData[index].lock_pwd}<br>
+        所属医院：${this.tableData[index].hospital}<br>
+        锁状态：${this.stateMap[this.tableData[index].status]}`
+        })
+      },
       handleReset (name) {
         this.$refs[name].resetFields()
       },
@@ -245,6 +340,10 @@
 <style scoped lang="less">
   .demo-spin-icon-load{
     animation: ani-demo-spin 1s linear infinite;
+  }
+  .input-item{
+    margin-top: 20px;
+    span{display: inline-block;width: 70px;}
   }
   .userlist{
     padding: 20px;

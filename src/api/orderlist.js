@@ -10,7 +10,7 @@ export const getOrderList = ({pageNum, pageSize,user_id,lock_no}) => {
       lock_no
     },
     headers:{
-      "ticket":app.$store.state.user.userId
+      "ticket":app.$store.state.user.token
     },
     method: 'post'
   })

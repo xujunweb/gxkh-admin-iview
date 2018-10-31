@@ -37,7 +37,7 @@ export const getUserList = (data) => {
     url: 'mobile/user/pageByUser',
     data: data,
     headers:{
-      "ticket":app.$store.state.user.userId
+      "ticket":app.$store.state.user.token
     },
     method: 'post'
   })
@@ -48,7 +48,7 @@ export const updateAppointInfo = (key,value) => {
     url: 'mobile/dictionary/updateByKey',
     data: {key:key,value:value},
     headers:{
-      "ticket":app.$store.state.user.userId
+      "ticket":app.$store.state.user.token
     },
     method: 'post'
   })
@@ -60,7 +60,7 @@ export const getAppointInfo = (key) => {
     data: {key:key},
     method: 'post',
     headers:{
-      "ticket":app.$store.state.user.userId
+      "ticket":app.$store.state.user.token
     }
   })
 }
@@ -71,7 +71,7 @@ export const getAllinfo = () => {
     data: {},
     method: 'post',
     headers:{
-      "ticket":app.$store.state.user.userId
+      "ticket":app.$store.state.user.token
     }
   })
 }

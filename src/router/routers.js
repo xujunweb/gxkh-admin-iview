@@ -27,7 +27,7 @@ export default [
     redirect: '/home',
     component: Main,
     meta: {
-      hideInMenu: false,
+      hideInMenu: true,
       notCache: true
     },
     children: [
@@ -35,7 +35,7 @@ export default [
         path: '/home',
         name: 'home',
         meta: {
-          hideInMenu: false,
+          hideInMenu: true,
           title: '首页',
           notCache: true,
           icon:'md-home'
@@ -44,201 +44,6 @@ export default [
       }
     ]
   },
-  // {
-  //   path: '',
-  //   name: 'doc',
-  //   meta: {
-  //     title: '文档',
-  //     href: 'https://lison16.github.io/iview-admin-doc/#/',
-  //     icon: 'ios-book'
-  //   }
-  // },
-  // {
-  //   path: '/join',
-  //   name: 'join',
-  //   component: Main,
-  //   children: [
-  //     {
-  //       path: 'join_page',
-  //       name: 'join_page',
-  //       meta: {
-  //         icon: '_qq',
-  //         title: 'QQ群'
-  //       },
-  //       component: () => import('@/view/join-page.vue')
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/components',
-  //   name: 'components',
-  //   meta: {
-  //     icon: 'logo-buffer',
-  //     title: '组件'
-  //   },
-  //   component: Main,
-  //   children: [
-  //     {
-  //       path: 'count_to_page',
-  //       name: 'count_to_page',
-  //       meta: {
-  //         icon: 'md-trending-up',
-  //         title: '数字渐变'
-  //       },
-  //       component: () => import('@/view/components/count-to/count-to.vue')
-  //     },
-  //     {
-  //       path: 'drag_list_page',
-  //       name: 'drag_list_page',
-  //       meta: {
-  //         icon: 'ios-infinite',
-  //         title: '拖拽列表'
-  //       },
-  //       component: () => import('@/view/components/drag-list/drag-list.vue')
-  //     },
-  //     {
-  //       path: 'tables_page',
-  //       name: 'tables_page',
-  //       meta: {
-  //         icon: 'md-grid',
-  //         title: '多功能表格'
-  //       },
-  //       component: () => import('@/view/components/tables/tables.vue')
-  //     },
-  //     {
-  //       path: 'split_pane_page',
-  //       name: 'split_pane_page',
-  //       meta: {
-  //         icon: 'md-pause',
-  //         title: '分割窗口'
-  //       },
-  //       component: () => import('@/view/components/split-pane/split-pane.vue')
-  //     },
-  //     {
-  //       path: 'markdown_page',
-  //       name: 'markdown_page',
-  //       meta: {
-  //         icon: 'logo-markdown',
-  //         title: 'Markdown编辑器'
-  //       },
-  //       component: () => import('@/view/components/markdown/markdown.vue')
-  //     },
-  //     {
-  //       path: 'editor_page',
-  //       name: 'editor_page',
-  //       meta: {
-  //         icon: 'ios-create',
-  //         title: '富文本编辑器'
-  //       },
-  //       component: () => import('@/view/components/editor/editor.vue')
-  //     },
-  //     {
-  //       path: 'icons_page',
-  //       name: 'icons_page',
-  //       meta: {
-  //         icon: '_bear',
-  //         title: '自定义图标'
-  //       },
-  //       component: () => import('@/view/components/icons/icons.vue')
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/update',
-  //   name: 'update',
-  //   meta: {
-  //     icon: 'md-cloud-upload',
-  //     title: '数据上传'
-  //   },
-  //   component: Main,
-  //   children: [
-  //     {
-  //       path: 'update_table_page',
-  //       name: 'update_table_page',
-  //       meta: {
-  //         icon: 'ios-document',
-  //         title: '上传Csv'
-  //       },
-  //       component: () => import('@/view/update/update-table.vue')
-  //     },
-  //     {
-  //       path: 'update_paste_page',
-  //       name: 'update_paste_page',
-  //       meta: {
-  //         icon: 'md-clipboard',
-  //         title: '粘贴表格数据'
-  //       },
-  //       component: () => import('@/view/update/update-paste.vue')
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/excel',
-  //   name: 'excel',
-  //   meta: {
-  //     icon: 'ios-stats',
-  //     title: 'EXCEL导入导出'
-  //   },
-  //   component: Main,
-  //   children: [
-  //     {
-  //       path: 'upload-excel',
-  //       name: 'upload-excel',
-  //       meta: {
-  //         icon: 'md-add',
-  //         title: '导入EXCEL'
-  //       },
-  //       component: () => import('@/view/excel/upload-excel.vue')
-  //     },
-  //     {
-  //       path: 'export-excel',
-  //       name: 'export-excel',
-  //       meta: {
-  //         icon: 'md-download',
-  //         title: '导出EXCEL'
-  //       },
-  //       component: () => import('@/view/excel/export-excel.vue')
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/tools_methods',
-  //   name: 'tools_methods',
-  //   meta: {
-  //     hide: true
-  //   },
-  //   component: Main,
-  //   children: [
-  //     {
-  //       path: 'tools_methods_page',
-  //       name: 'tools_methods_page',
-  //       meta: {
-  //         icon: 'ios-hammer',
-  //         title: '工具方法'
-  //       },
-  //       component: () => import('@/view/tools-methods/tools-methods.vue')
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/directive',
-  //   name: 'directive',
-  //   meta: {
-  //     hide: true
-  //   },
-  //   component: Main,
-  //   children: [
-  //     {
-  //       path: 'directive_page',
-  //       name: 'directive_page',
-  //       meta: {
-  //         icon: 'ios-navigate',
-  //         title: '指令'
-  //       },
-  //       component: () => import('@/view/directive/directive.vue')
-  //     }
-  //   ]
-  // },
   {
     path: '/userlist',
     name: 'userlist',
@@ -271,6 +76,7 @@ export default [
         path: 'system_page',
         name: 'system_page',
         meta: {
+          access: ['admin'],
           icon: 'md-settings',
           title: '系统设置'
         },

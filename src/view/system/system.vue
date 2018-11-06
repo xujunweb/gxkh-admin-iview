@@ -33,6 +33,39 @@
       </Upload>
     </div>
     <div class="block"></div>
+    <div class="title-h2">官网轮播图</div>
+    <div class="imgList moudel">
+      <div class="demo-upload-list" v-for="(item,key) in uploadList">
+        <template v-if="!item.showProgress || item.showProgress == 100">
+          <img :src="item">
+          <div class="demo-upload-list-cover">
+            <Icon type="ios-eye-outline" @click.native="handleView(item)" size="30"></Icon>
+            <Icon type="ios-trash-outline" @click.native="showRemove(key)" size="30"></Icon>
+          </div>
+        </template>
+        <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
+      </div>
+      <Upload
+        ref="upload"
+        :show-upload-list="false"
+        :default-file-list="defaultList"
+        :on-success="handleSuccess2"
+        :format="['jpg','jpeg','png']"
+        :max-size="5048"
+        :on-format-error="handleFormatError"
+        :on-exceeded-size="handleMaxSize"
+        :before-upload="handleBeforeUpload"
+        multiple
+        type="drag"
+        action="https://www.chmbkh.com/mobile/file/upload"
+        :headers="headers"
+        style="display: inline-block;width:150px;">
+        <div class="upload">
+          <Icon type="ios-camera" size="40"></Icon>
+        </div>
+      </Upload>
+    </div>
+    <div class="block"></div>
     <div class="title-h2">计费设置</div>
     <div class="time moudel">
       <div class="item">
@@ -207,11 +240,19 @@ export default {
     },
     //上传成功
     handleSuccess (res, file) {
-      console.log('上传成功-------',res,file)
+      console.log('小程序轮播图上传成功-------',res,file)
       for(let i=0,len=res.data.length;i<len;i++){
         this.uploadList.push(res.data[i].url)
       }
       this.updateAppointInfo('carousel_img',this.uploadList.join(','))
+    },
+    //官网轮播图上传成功
+    handleSuccess2 (res, file) {
+      console.log('官网轮播图上传成功-------',res,file)
+      for(let i=0,len=res.data.length;i<len;i++){
+        this.uploadList.push(res.data[i].url)
+      }
+      // this.updateAppointInfo('carousel_img',this.uploadList.join(','))
     },
     handleFormatError (file) {
       this.$Notice.warning({

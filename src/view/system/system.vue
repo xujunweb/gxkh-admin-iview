@@ -2,18 +2,18 @@
   <div class="system">
     <div class="title-h2">小程序轮播图</div>
     <div class="imgList moudel">
-      <div class="demo-upload-list" v-for="(item,key) in uploadList">
+      <div class="demo-upload-list" v-for="(item,key) in uploadList1">
         <template v-if="!item.showProgress || item.showProgress == 100">
           <img :src="item">
           <div class="demo-upload-list-cover">
             <Icon type="ios-eye-outline" @click.native="handleView(item)" size="30"></Icon>
-            <Icon type="ios-trash-outline" @click.native="showRemove(key)" size="30"></Icon>
+            <Icon type="ios-trash-outline" @click.native="showRemove(key,1)" size="30"></Icon>
           </div>
         </template>
         <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
       </div>
       <Upload
-        ref="upload"
+        ref="upload1"
         :show-upload-list="false"
         :default-file-list="defaultList"
         :on-success="handleSuccess"
@@ -21,7 +21,7 @@
         :max-size="5048"
         :on-format-error="handleFormatError"
         :on-exceeded-size="handleMaxSize"
-        :before-upload="handleBeforeUpload"
+        :before-upload="handleBeforeUpload(1)"
         multiple
         type="drag"
         action="https://www.chmbkh.com/mobile/file/upload"
@@ -35,26 +35,59 @@
     <div class="block"></div>
     <div class="title-h2">官网轮播图</div>
     <div class="imgList moudel">
-      <div class="demo-upload-list" v-for="(item,key) in uploadList">
+      <div class="demo-upload-list" v-for="(item,key) in uploadList2">
         <template v-if="!item.showProgress || item.showProgress == 100">
           <img :src="item">
           <div class="demo-upload-list-cover">
             <Icon type="ios-eye-outline" @click.native="handleView(item)" size="30"></Icon>
-            <Icon type="ios-trash-outline" @click.native="showRemove(key)" size="30"></Icon>
+            <Icon type="ios-trash-outline" @click.native="showRemove(key,2)" size="30"></Icon>
           </div>
         </template>
         <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
       </div>
       <Upload
-        ref="upload"
+        ref="upload2"
         :show-upload-list="false"
         :default-file-list="defaultList"
-        :on-success="handleSuccess2"
+        :on-success="handleSuccess"
         :format="['jpg','jpeg','png']"
         :max-size="5048"
         :on-format-error="handleFormatError"
         :on-exceeded-size="handleMaxSize"
-        :before-upload="handleBeforeUpload"
+        :before-upload="handleBeforeUpload(2)"
+        multiple
+        type="drag"
+        action="https://www.chmbkh.com/mobile/file/upload"
+        :headers="headers"
+        style="display: inline-block;width:150px;">
+        <div class="upload">
+          <Icon type="ios-camera" size="40"></Icon>
+        </div>
+      </Upload>
+    </div>
+    <div class="block"></div>
+    <div class="title-h2">产品图片</div>
+    <div class="imgList moudel">
+      <div class="demo-upload-list" v-for="(item,key) in uploadList3">
+        <template v-if="!item.showProgress || item.showProgress == 100">
+          <img :src="item">
+          <div class="demo-upload-list-cover">
+            <Icon type="ios-eye-outline" @click.native="handleView(item)" size="30"></Icon>
+            <Icon type="ios-trash-outline" @click.native="showRemove(key,3)" size="30"></Icon>
+          </div>
+        </template>
+        <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
+      </div>
+      <Upload
+        ref="upload3"
+        :show-upload-list="false"
+        :default-file-list="defaultList"
+        :on-success="handleSuccess"
+        :format="['jpg','jpeg','png']"
+        :max-size="5048"
+        :on-format-error="handleFormatError"
+        :on-exceeded-size="handleMaxSize"
+        :before-upload="handleBeforeUpload(3)"
         multiple
         type="drag"
         action="https://www.chmbkh.com/mobile/file/upload"
@@ -122,19 +155,27 @@ export default {
         "ticket":app.$store.state.user.userId
       },
       remove:false,
+      imgIndex:1, //操作的文件数组索引
       removeKey:0,
       defaultList: [
       ],
       imgName: '',
       visible: false,
-      uploadList: [],
+      uploadList1: [],   //小程序轮播图
+      uploadList2: [],  //官网轮播图
+      uploadList3: [],  //产品图片
       edit: false,
       money: 0,
       timeList: [1, 2, 3, 4, 5, 6, 7],
       newTimeList: [],
       disabled:true,
       phone:'',
-      cusDisabled:true
+      cusDisabled:true,
+      imgMap:{
+        1:'carousel_img',
+        2:'pc_carousel_img',
+        3:'pc_product_img',
+      },
     }
   },
   created () {
@@ -142,7 +183,9 @@ export default {
     this.getAllinfo()
   },
   mounted () {
-    this.uploadList = this.$refs.upload.fileList
+    this.uploadList1 = this.$refs.upload1.fileList
+    this.uploadList2 = this.$refs.upload2.fileList
+    this.uploadList3 = this.$refs.upload3.fileList
   },
   methods: {
     //请求loading
@@ -170,8 +213,10 @@ export default {
         console.log('所有配置',res)
         this.phone = data.data[0].value
         this.money = +((data.data[1].value)/100)
-        this.uploadList = data.data[2].value.split(',')
+        this.uploadList1 = data.data[2].value.split(',')
         this.timeList = data.data[3].value.split(',')
+        this.uploadList2 = data.data[4].value.split(',')
+        this.uploadList3 = data.data[5].value.split(',')
         this.$Spin.hide()
       }).catch(err => {
         this.$Spin.hide()
@@ -227,32 +272,28 @@ export default {
       this.visible = true
     },
     //删除弹窗
-    showRemove (key) {
+    showRemove (key,index) {
       this.removeKey = key
+      this.imgIndex = index
       this.remove = true
     },
     //删除图片
     handleRemove () {
+      var upload = 'upload'+this.imgIndex
+      var uploadList = 'uploadList'+this.imgIndex
       // const fileList = this.$refs.upload.fileList
-      this.$refs.upload.fileList.splice(this.removeKey, 1)
-      this.uploadList.splice(this.removeKey, 1)
-      this.updateAppointInfo('carousel_img',this.uploadList.join(','))
+      this.$refs[upload].fileList.splice(this.removeKey, 1)
+      this[uploadList].splice(this.removeKey, 1)
+      this.updateAppointInfo(this.imgMap[this.imgIndex],this[uploadList].join(','))
     },
     //上传成功
     handleSuccess (res, file) {
       console.log('小程序轮播图上传成功-------',res,file)
+      var uploadList = 'uploadList'+this.imgIndex
       for(let i=0,len=res.data.length;i<len;i++){
-        this.uploadList.push(res.data[i].url)
+        this[uploadList].push(res.data[i].url)
       }
-      this.updateAppointInfo('carousel_img',this.uploadList.join(','))
-    },
-    //官网轮播图上传成功
-    handleSuccess2 (res, file) {
-      console.log('官网轮播图上传成功-------',res,file)
-      for(let i=0,len=res.data.length;i<len;i++){
-        this.uploadList.push(res.data[i].url)
-      }
-      // this.updateAppointInfo('carousel_img',this.uploadList.join(','))
+      this.updateAppointInfo(this.imgMap[this.imgIndex],this[uploadList].join(','))
     },
     handleFormatError (file) {
       this.$Notice.warning({
@@ -263,18 +304,23 @@ export default {
     handleMaxSize (file) {
       this.$Notice.warning({
         title: '文件大小超出限制',
-        desc: '文件  ' + file.name + ' 太大, 请上传2M以下的文件'
+        desc: '文件  ' + file.name + ' 太大, 请上传5M以下的文件'
       })
     },
-    handleBeforeUpload () {
-      const check = this.uploadList.length < 5
-      if (!check) {
-        this.$Notice.warning({
-          title: '最多只能选择5张图片.'
-        })
+    handleBeforeUpload (index) {
+      var oldindex = index
+      return (e)=>{
+        this.imgIndex = oldindex
+        console.log('上传之前的-----',index,e)
+        const check = this.uploadList1.length < 5
+        if (!check) {
+          this.$Notice.warning({
+            title: '最多只能选择5张图片.'
+          })
+        }
+        return check
       }
-      return check
-    }
+    },
   }
 }
 </script>

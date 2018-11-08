@@ -45,6 +45,7 @@ export default {
           const data = res.data
           commit('setToken', data.data.id)
           commit('setAccess', data.data.username)
+          commit('setUserName', data.data.username)
           resolve()
         }).catch(err => {
           reject(err)
@@ -73,8 +74,8 @@ export default {
         getUserInfo(state.token).then(res => {
           const data = res.data
           commit('setAvator', data.data.avator)
-          commit('setUserName', data.data.user_name)
-          commit('setUserId', data.data.user_id)
+          commit('setUserName', data.data.username)
+          commit('setUserId', data.data.id)
           // commit('setAccess', data.user_name)
           resolve(data)
         }).catch(err => {

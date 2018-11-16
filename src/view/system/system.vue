@@ -68,15 +68,18 @@
     <div class="block"></div>
     <div class="title-h2">产品图片</div>
     <div class="imgList moudel">
-      <div class="demo-upload-list" v-for="(item,key) in uploadList3">
-        <template v-if="!item.showProgress || item.showProgress == 100">
-          <img :src="item">
-          <div class="demo-upload-list-cover">
-            <Icon type="ios-eye-outline" @click.native="handleView(item)" size="30"></Icon>
-            <Icon type="ios-trash-outline" @click.native="showRemove(key,3)" size="30"></Icon>
-          </div>
-        </template>
-        <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
+      <div v-for="(item,key) in uploadList3" class="upload-list">
+        <div class="demo-upload-list" >
+          <template v-if="!item.showProgress || item.showProgress == 100">
+            <img :src="item">
+            <div class="demo-upload-list-cover">
+              <Icon type="ios-eye-outline" @click.native="handleView(item)" size="30"></Icon>
+              <Icon type="ios-trash-outline" @click.native="showRemove(key,3)" size="30"></Icon>
+            </div>
+          </template>
+          <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
+        </div>
+        <Input class="title-input"></Input>
       </div>
       <Upload
         ref="upload3"
@@ -97,6 +100,9 @@
           <Icon type="ios-camera" size="40"></Icon>
         </div>
       </Upload>
+      <div class="save">
+        <Button type="primary">保存</Button>
+      </div>
     </div>
     <div class="block"></div>
     <div class="title-h2">计费设置</div>
@@ -290,10 +296,17 @@ export default {
     handleSuccess (res, file) {
       console.log('小程序轮播图上传成功-------',res,file)
       var uploadList = 'uploadList'+this.imgIndex
-      for(let i=0,len=res.data.length;i<len;i++){
-        this[uploadList].push(res.data[i].url)
+      if(this.imgIndex == 3){
+        for(let i=0,len=res.data.length;i<len;i++){
+          this[uploadList].push({img:res.data[i].url,title:''})
+        }
+        this.updateAppointInfo(this.imgMap[this.imgIndex],this[uploadList])
+      }else {
+        for(let i=0,len=res.data.length;i<len;i++){
+          this[uploadList].push(res.data[i].url)
+        }
+        this.updateAppointInfo(this.imgMap[this.imgIndex],this[uploadList].join(','))
       }
-      this.updateAppointInfo(this.imgMap[this.imgIndex],this[uploadList].join(','))
     },
     handleFormatError (file) {
       this.$Notice.warning({
@@ -395,6 +408,7 @@ export default {
       margin-left: 15px;
     }
   }
+
   .demo-upload-list{
     display: inline-block;
     width: 150px;
@@ -408,10 +422,23 @@ export default {
     position: relative;
     box-shadow: 0 1px 1px rgba(0,0,0,.2);
     margin-right: 15px;
+    position: relative;
+  }
+  .upload-list{
+    display: inline-block;
+    width: 155px;
+    height: 130px;
+    margin-right: 15px;
+    .demo-upload-list{
+      margin-right: 0;
+    }
+  }
+  .save{
+    margin-top: 20px;
   }
   .demo-upload-list img{
-    width: 100%;
-    height: 100%;
+    width: 150px;
+    height: 130px;
   }
   .demo-upload-list-cover{
     display: none;

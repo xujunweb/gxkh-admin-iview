@@ -6,9 +6,15 @@
             <!--<span>注册时间：</span>-->
             <!--<DatePicker type="datetimerange" v-model="formInline.date" :options="dateoptions" @on-change="changeDate" format="yyyy-MM-dd HH:mm" placeholder="请选择注册时间" style="width: 300px"></DatePicker>-->
           <!--</FormItem>-->
-          <FormItem prop="phone">
+          <FormItem prop="telphone">
             <span>手机号：</span>
-            <Input v-model="formInline.phone" placeholder="请输入手机号" number clearable style="width: 200px" />
+            <Input v-model="formInline.telphone" placeholder="请输入手机号" number clearable style="width: 200px" />
+          </FormItem>
+          <FormItem prop="type">
+            <span>用户身份：</span>
+            <Select v-model="formInline.type" style="width:200px">
+              <Option v-for="item in typeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
           </FormItem>
           <FormItem>
             <Button type="primary" @click="handleSubmit('formInline')">搜索</Button>
@@ -36,8 +42,8 @@ export default {
     return {
       total:0,
       formInline: {
-        phone: '',
-        date: ''
+        telphone: '',
+        type: ''
       },
       pageSize: 15,
       ruleInline: {
@@ -46,6 +52,17 @@ export default {
           // { len: 11, message: '请输入正确的手机号', trigger: 'blur' }
           // { type: 'string', min:11, message: '请输入数字', trigger: 'blur' },
         ]
+      },
+      typeList:[
+        {value:'',label:'全部'},
+        {value:'0',label:'普通用户'},
+        {value:'1',label:'管理员'},
+        {value:'2',label:'代理商'},
+      ],
+      typeMap:{
+        0:'普通用户',
+        1:'管理员',
+        2:'代理商'
       },
       dateoptions: {
         shortcuts: [
@@ -79,18 +96,20 @@ export default {
         ]
       },
       columns: [
-        // {
-        //   title: '微信账号',
-        //   key: 'weix',
-        //   render: (h, params) => {
-        //     return h('div', [
-        //       h('strong', params.row.weix)
-        //     ])
-        //   }
-        // },
         {
           title: '手机号',
           key: 'telphone'
+        },
+        {
+          title: '用户ID',
+          key: 'id'
+        },
+        {
+          title: '用户身份',
+          key: 'type',
+          render: (h, params) => {
+            return h('div', this.typeMap[params.row.type])
+          }
         },
         {
           title: '使用总时间',
@@ -155,7 +174,7 @@ export default {
     // 请求用户列表
     getUserList (p) {
       return new Promise((resolve, reject)=>{
-        getUserList({pageNum: p, pageSize: this.pageSize,type:0,telphone:this.formInline.phone}).then(res => {
+        getUserList({pageNum: p, pageSize: this.pageSize,...this.formInline}).then(res => {
           console.log('用户列表----',res)
           const data = res.data
           this.tableData = res.data.data.list

@@ -1,6 +1,6 @@
 <template>
   <div class="system">
-    <div class="title-h2">小程序轮播图</div>
+    <div class="title-h2">小程序轮播图<span>(图片比例建议650X480,大小不超过2M)</span></div>
     <div class="imgList moudel">
       <div class="demo-upload-list" v-for="(item,key) in uploadList1">
         <template v-if="!item.showProgress || item.showProgress == 100">
@@ -33,7 +33,7 @@
       </Upload>
     </div>
     <div class="block"></div>
-    <div class="title-h2">官网轮播图</div>
+    <div class="title-h2">官网轮播图<span>(图片比例建议1920X991,大小不超过5M)</span></div>
     <div class="imgList moudel">
       <div class="demo-upload-list" v-for="(item,key) in uploadList2">
         <template v-if="!item.showProgress || item.showProgress == 100">
@@ -66,12 +66,12 @@
       </Upload>
     </div>
     <div class="block"></div>
-    <div class="title-h2">产品图片</div>
+    <div class="title-h2">产品图片<span>(图片比例建议800X600,大小不超过5M)</span></div>
     <div class="imgList moudel">
       <div v-for="(item,key) in uploadList3" class="upload-list">
         <div class="demo-upload-list" >
           <template v-if="!item.showProgress || item.showProgress == 100">
-            <img :src="item">
+            <img :src="item.img">
             <div class="demo-upload-list-cover">
               <Icon type="ios-eye-outline" @click.native="handleView(item)" size="30"></Icon>
               <Icon type="ios-trash-outline" @click.native="showRemove(key,3)" size="30"></Icon>
@@ -79,7 +79,7 @@
           </template>
           <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
         </div>
-        <Input class="title-input"></Input>
+        <Input class="title-input" v-model="item.title"></Input>
       </div>
       <Upload
         ref="upload3"
@@ -101,7 +101,7 @@
         </div>
       </Upload>
       <div class="save">
-        <Button type="primary">保存</Button>
+        <Button type="primary" @click="saveProImg">保存</Button>
       </div>
     </div>
     <div class="block"></div>
@@ -222,7 +222,7 @@ export default {
         this.uploadList1 = data.data[2].value.split(',')
         this.timeList = data.data[3].value.split(',')
         this.uploadList2 = data.data[4].value.split(',')
-        this.uploadList3 = data.data[5].value.split(',')
+        this.uploadList3 = JSON.parse(data.data[5].value)
         this.$Spin.hide()
       }).catch(err => {
         this.$Spin.hide()
@@ -234,6 +234,9 @@ export default {
       updateAppointInfo(key,value).then(res => {
         const data = res.data
         console.log(res)
+        if(data.code === 100){
+          this.$Message.success('操作成功');
+        }
       }).catch(err => {
         console.log(err)
       })
@@ -290,7 +293,7 @@ export default {
       // const fileList = this.$refs.upload.fileList
       this.$refs[upload].fileList.splice(this.removeKey, 1)
       this[uploadList].splice(this.removeKey, 1)
-      this.updateAppointInfo(this.imgMap[this.imgIndex],this[uploadList].join(','))
+      // this.updateAppointInfo(this.imgMap[this.imgIndex],this[uploadList].join(','))
     },
     //上传成功
     handleSuccess (res, file) {
@@ -300,12 +303,29 @@ export default {
         for(let i=0,len=res.data.length;i<len;i++){
           this[uploadList].push({img:res.data[i].url,title:''})
         }
-        this.updateAppointInfo(this.imgMap[this.imgIndex],this[uploadList])
+        // this.updateAppointInfo(this.imgMap[this.imgIndex],JSON.stringify(this[uploadList]))
       }else {
         for(let i=0,len=res.data.length;i<len;i++){
           this[uploadList].push(res.data[i].url)
         }
         this.updateAppointInfo(this.imgMap[this.imgIndex],this[uploadList].join(','))
+      }
+    },
+    //保存产品图片
+    saveProImg(){
+      var isadd = true
+      for(let i=0,len=this.uploadList3.length;i<len;i++){
+        if(!this.uploadList3[i].title){
+          isadd = false
+          this.$Notice.warning({
+            title: '标题不能为空',
+            desc: '请填写产品图标题'
+          })
+          break
+        }
+      }
+      if(isadd){
+        this.updateAppointInfo(this.imgMap[3],JSON.stringify(this.uploadList3))
       }
     },
     handleFormatError (file) {
@@ -357,6 +377,9 @@ export default {
   .title-h2{
     font-size: 16px;
     line-height: 60px;padding-left: 20px;
+    span{
+      color: #999;font-size: 12px;margin-left: 10px;
+    }
   }
   .block{
     background: #f5f7f9;
@@ -427,7 +450,8 @@ export default {
   .upload-list{
     display: inline-block;
     width: 155px;
-    height: 130px;
+    /*height: 130px;*/
+    margin-bottom: 15px;
     margin-right: 15px;
     .demo-upload-list{
       margin-right: 0;

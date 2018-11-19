@@ -59,7 +59,7 @@
       title="编辑锁信息"
       @on-ok="updateDevice"
       @on-cancel="cancel">
-      <h3>锁二维码编号：{{this.tableData[this.selectIndex].qr_code_no}}</h3>
+      <h3>锁二维码编号：{{this.tableData[this.selectIndex]&&this.tableData[this.selectIndex].qr_code_no}}</h3>
       <div class="input-item"><span>用户ID：</span><Input v-model="inputUserId" placeholder="请输入用户ID" style="width: 200px" /></div>
       <div class="input-item"><span>绑定医院：</span><Input v-model="hospital" placeholder="请输入医院" style="width: 200px" /></div>
     </Modal>
@@ -85,6 +85,7 @@
           lock_mac:'',  //锁mac地址
           state:'',     //锁状态
           hospital:'',  //锁所属医院
+          user_id:'',   //用户ID
         },
         stateList:[
           {value:'',label:'全部'},
@@ -192,7 +193,7 @@
             }
           }
         ],
-        tableData: [{}]
+        tableData: []
       }
     },
     computed: {
@@ -226,16 +227,12 @@
         return new Promise((resolve, reject)=>{
           let data = {
             pageNum: p, pageSize: this.pageSize,
-            lock_no: this.formInline.lock_no,
-            qr_code_no: this.formInline.qr_code_no,
-            device_no: this.formInline.device_no,
-            lock_mac: this.formInline.lock_mac,
-            state: this.formInline.state,
+            ...this.formInline
           }
           getDeviceList(data).then(res => {
             console.log('设备列表----',res)
             const data = res.data
-            this.tableData = res.data.data.list
+            this.tableData = res.data.data.list.length?res.data.data.list:[]
             this.total = res.data.data.total
             resolve(res.data)
             console.log(res)

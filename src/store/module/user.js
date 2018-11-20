@@ -44,7 +44,7 @@ export default {
         }).then(res => {
           const data = res.data
           commit('setToken', data.data.id)
-          commit('setAccess', data.data.username)
+          commit('setAccess', data.data.type)
           commit('setUserName', data.data.username)
           resolve()
         }).catch(err => {

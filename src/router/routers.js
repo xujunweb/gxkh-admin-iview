@@ -48,15 +48,15 @@ export default [
     path: '/userlist',
     name: 'userlist',
     meta: {
-      hide: true
+      hide: true,
     },
     component: Main,
     children: [
       {
         path: 'userlist_page',
-        name: 'userlist_page',
+        name: 'userlist',
         meta: {
-          access: ['admin'],
+          access: [1],
           icon: 'md-person',
           title: '用户管理'
         },
@@ -74,9 +74,9 @@ export default [
     children: [
       {
         path: 'system_page',
-        name: 'system_page',
+        name: 'system',
         meta: {
-          access: ['admin'],
+          access: [1],
           icon: 'md-settings',
           title: '系统设置'
         },
@@ -94,7 +94,7 @@ export default [
     children: [
       {
         path: 'orderList_page',
-        name: 'orderList_page',
+        name: 'orderList',
         meta: {
           icon: 'md-reorder',
           title: '订单管理'
@@ -113,7 +113,7 @@ export default [
     children: [
       {
         path: 'devicelist_page',
-        name: 'devicelist_page',
+        name: 'devicelist',
         meta: {
           icon: 'md-cog',
           title: '设备管理'
@@ -132,7 +132,7 @@ export default [
     children: [
       {
         path: 'workList_page',
-        name: 'workList_page',
+        name: 'workList',
         meta: {
           icon: 'md-list',
           title: '故障反馈'

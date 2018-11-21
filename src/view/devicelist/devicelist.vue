@@ -117,7 +117,14 @@
           },
           {
             title: '设备编号',
-            key: 'lock_no'
+            key: 'lock_no',
+            render:(h, params)=>{
+              if(app.$store.state.user.access[0] == '1'){
+                return h('div', params.row.lock_no)
+              }else {
+                return h('div', '-')
+              }
+            }
           },
           {
             title: '柜子编号',
@@ -125,7 +132,14 @@
           },
           {
             title: '设备密码',
-            key: 'lock_pwd'
+            key: 'lock_pwd',
+            render:(h, params)=>{
+              if(app.$store.state.user.access[0] == '1'){
+                return h('div', params.row.lock_pwd)
+              }else {
+                return h('div', '-')
+              }
+            }
           },
           {
             title: '设备秘钥',
@@ -282,7 +296,6 @@
         this.$Modal.info({
           title: '锁信息',
           content: `锁二维码：${this.tableData[index].qr_code_no}<br>
-        锁密码：${this.tableData[index].lock_pwd}<br>
         所属医院：${this.tableData[index].hospital}<br>
         锁状态：${this.stateMap[this.tableData[index].status]}`
         })

@@ -49,6 +49,8 @@ export default [
     name: 'userlist',
     meta: {
       hide: true,
+      icon: 'md-person',
+      title: '用户管理'
     },
     component: Main,
     children: [
@@ -68,7 +70,9 @@ export default [
     path: '/system',
     name: 'system',
     meta: {
-      hide: true
+      hide: true,
+      icon: 'md-settings',
+      title: '系统设置'
     },
     component: Main,
     children: [

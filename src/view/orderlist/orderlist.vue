@@ -2,6 +2,10 @@
   <div class="userlist">
     <div class="search-div">
       <Form ref="formInline" :model="formInline" :rules="ruleInline" inline>
+        <FormItem prop="date">
+          <span>订单创建时间：</span>
+          <DatePicker type="datetimerange" v-model="formInline.date" :options="dateoptions" @on-change="changeDate" format="yyyy-MM-dd HH:mm" placeholder="请选择创建时间" style="width: 300px"></DatePicker>
+        </FormItem>
         <FormItem prop="user_id">
           <span>用户id：</span>
           <Input v-model="formInline.user_id" placeholder="请输入用户id" number clearable style="width: 200px" />
@@ -48,6 +52,37 @@
             // { type: 'string', min:11, message: '请输入数字', trigger: 'blur' },
           ]
         },
+        dateoptions: {
+          shortcuts: [
+            {
+              text: '1周内',
+              value () {
+                const end = new Date()
+                const start = new Date()
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+                return [start, end]
+              }
+            },
+            {
+              text: '1个月',
+              value () {
+                const end = new Date()
+                const start = new Date()
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+                return [start, end]
+              }
+            },
+            {
+              text: '3个月内',
+              value () {
+                const end = new Date()
+                const start = new Date()
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+                return [start, end]
+              }
+            }
+          ]
+        },
         columns: [
           {
             title: '订单号',
@@ -55,13 +90,26 @@
           },
           {
             title: '用户ID',
-            key: 'user_id'
+            key: 'user_id',
+            render:(h, params)=>{
+              if(app.$store.state.user.access[0] == '1'){
+                return h('div', params.row.user_id)
+              }else {
+                return h('div', '-')
+              }
+
+            }
           },
           {
             title: '用户手机',
             key: 'user',
             render:(h, params)=>{
-              return h('div', params.row.user.telphone)
+              if(app.$store.state.user.access[0] == '1'){
+                return h('div', params.row.user.telphone)
+              }else {
+                return h('div', '-')
+              }
+
             }
           },
           {
@@ -107,7 +155,9 @@
           let data = {
             pageNum: p, pageSize: this.pageSize,
             user_id:this.formInline.user_id,
-            lock_no: this.formInline.lock_no
+            lock_no: this.formInline.lock_no,
+            start_time:this.formInline.date[0],
+            end_time:this.formInline.date[1],
           }
           getOrderList(data).then(res => {
             console.log('订单列表----',res)
@@ -140,6 +190,7 @@
         this.$refs[name].resetFields()
       },
       changeDate (e) {
+        console.log('日期---',e)
         this.formInline.date = e
       },
       show (index) {

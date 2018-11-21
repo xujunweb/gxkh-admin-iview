@@ -152,7 +152,7 @@
             width: 150,
             align: 'center',
             render: (h, params) => {
-              if(app.$store.state.user.token == '100000000'){
+              if(app.$store.state.user.access[0] == '1'){
                 return h('div', [
                   h('Button', {
                     props: {

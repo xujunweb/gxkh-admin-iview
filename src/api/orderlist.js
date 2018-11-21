@@ -1,13 +1,11 @@
 import axios from '@/libs/api.request'
 //获取订单列表
-export const getOrderList = ({pageNum, pageSize,user_id,lock_no}) => {
+export const getOrderList = (data) => {
   return axios.request({
     url: 'mobile/lockOrder/pageByLockOrder',
     data: {
-      pageNum,
-      pageSize,
-      user_id,
-      lock_no
+      ...data,
+      agency_user_id:app.$store.state.user.token==100000000?'':app.$store.state.user.token,
     },
     headers:{
       "ticket":app.$store.state.user.token

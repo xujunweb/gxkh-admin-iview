@@ -43,7 +43,7 @@
           :max-size="5048"
           :on-format-error="handleFormatError"
           :on-exceeded-size="handleMaxSize"
-          action="https://www.chmbkh.com/mobile/lockInfo/importLockInfoData">
+          action="https://www.chmbkh.com/mobile/lockInfo/importLockInfoData" v-if="access[0] == '1'">
           <Button icon="ios-cloud-upload-outline">导入设备</Button>
         </Upload>
       </Form>
@@ -69,6 +69,7 @@
 <script>
   // import table2excel from '@/libs/table2excel.js'
   import { getDeviceList,updateDevice } from '@/api/devicelist'
+  import {mapGetters} from 'vuex'
   export default {
     name: 'devicelist',
     components: {
@@ -166,7 +167,7 @@
             width: 150,
             align: 'center',
             render: (h, params) => {
-              if(app.$store.state.user.access[0] == '1'){
+              if(this.access[0] == '1'){
                 return h('div', [
                   h('Button', {
                     props: {
@@ -211,6 +212,9 @@
       }
     },
     computed: {
+      ...mapGetters({
+        'access':'getAccess'
+      })
     },
     created () {
       // 组件实例化生命周期

@@ -32,7 +32,7 @@
 </template>
 
 <script>
-// import table2excel from '@/libs/table2excel.js'
+import table2excel from '@/libs/table2excel.js'
 import { getUserList } from '@/api/user'
 export default {
   name: 'userlist',

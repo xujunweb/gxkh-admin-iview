@@ -12,6 +12,9 @@ export default {
   getters: {
     getUserLoginInfo (state) {
       return state.userId
+    },
+    getAccess(state){
+      return state.access
     }
   },
   mutations: {

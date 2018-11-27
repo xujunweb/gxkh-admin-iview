@@ -19,7 +19,7 @@
           <Button @click="handleReset('formInline')" style="margin-left: 8px">清除条件</Button>
         </FormItem>
       </Form>
-      <!--<Button size="large" icon="ios-download-outline" type="primary" @click="exportExcel">导出表格</Button>-->
+      <Button size="large" icon="ios-download-outline" type="primary" @click="exportExcel">导出表格</Button>
     </div>
     <Table border :columns="columns" :data="tableData" stripe ref="userTable"></Table>
     <div class="page">
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-  // import table2excel from '@/libs/table2excel.js'
+  import table2excel from '@/libs/table2excel.js'
   import { getOrderList } from '@/api/orderlist'
   export default {
     name: 'orderlist',
@@ -213,7 +213,7 @@
       },
       // 导出excel
       exportExcel () {
-        table2excel.transform(this.$refs.userTable, 'hrefToExportTable', '文件名')
+        table2excel.transform(this.$refs.userTable, 'hrefToExportTable', '订单')
       }
     },
     watch: {

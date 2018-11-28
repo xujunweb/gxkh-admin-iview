@@ -23,7 +23,8 @@
     </div>
     <Table border :columns="columns" :data="tableData" stripe ref="userTable"></Table>
     <div class="page">
-      <Page :total="total" show-total show-elevator :page-size="pageSize" @on-change="pageSwitch" />
+      <Page :total="total" show-total show-elevator :page-size="pageSize" @on-change="pageSwitch" class="pagecom" />
+      <span>每页</span><Input v-model="pageSize" number @on-enter="getOrderList(1)" style="width: 60px;" class="pagesize" /><span>条</span>
     </div>
     <a id="hrefToExportTable" style="postion: absolute;left: -10px;top: -10px;width: 0px;height: 0px;"></a>
   </div>
@@ -158,14 +159,17 @@
             start_time:this.formInline.date[0],
             end_time:this.formInline.date[1],
           }
+          this.$Spin.show()
           getOrderList(data).then(res => {
             console.log('订单列表----',res)
             const data = res.data
             this.tableData = res.data.data.list
             this.total = res.data.data.total
+            this.$Spin.hide()
             resolve(res.data)
             console.log(res)
           }).catch(err => {
+            this.$Spin.hide()
             reject(err)
             console.log(err)
           })
@@ -224,10 +228,18 @@
 <style scoped lang="less">
   .userlist{
     padding: 20px;
+    padding-bottom: 50px;
   }
   .page{
     text-align: right;
-    margin-top: 40px;
+    margin-top: 25px;
+    display: flex;
+    align-items: center;
+    .pagecom{margin-right: 15px;}
+    .pagesize{
+      margin-left: 8px;
+      margin-right: 8px;
+    }
   }
   .search-div{
     margin-top: 10px;

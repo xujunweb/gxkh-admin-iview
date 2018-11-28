@@ -33,8 +33,13 @@ function tranform (table, aId, name) {
         tableInnerHTML += '</tr><thead><tbody>'
       } else {
         tableInnerHTML += '<tr>'
-        Array.from(tableBody.rows[i].children).forEach((td) => {
-          tableInnerHTML = tableInnerHTML + '<td>' + td.children[0].children[0].innerHTML + '</td>'
+        Array.from(tableBody.rows[i].children).forEach((td,index) => {
+          if(index === 0){
+            tableInnerHTML = tableInnerHTML + '<td>\'' + td.children[0].children[0].innerHTML + '\'</td>'
+          }else {
+            tableInnerHTML = tableInnerHTML + '<td>' + td.children[0].children[0].innerHTML + '</td>'
+          }
+
         })
         tableInnerHTML += '</tr>'
       }

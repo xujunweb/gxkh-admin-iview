@@ -45,12 +45,6 @@ export default {
   },
   data () {
     return {
-      inforCardData: [
-        { title: '总用户量', icon: 'md-person-add', count: 0, color: '#2d8cf0' },
-        { title: '总订单数', icon: 'md-reorder', count: 0, color: '#19be6b' },
-        { title: '在用设备数', icon: 'md-cog', count: 0, color: '#ff9900' },
-        { title: '使用总时间(h)', icon: 'md-clock', count: 0, color: '#ed3f14' }
-      ],
       pieData: [
         {value: 335, name: '直接访问'},
         {value: 310, name: '邮件营销'},
@@ -71,16 +65,20 @@ export default {
   },
   computed:{
     ...mapGetters({
-      'indexData':'getIndexData'
-    })
+      'indexData':'getIndexData',
+      'access':'getAccess',
+      'inforCardData':'getInforCardData'
+    }),
   },
   created(){
     this.$store.dispatch('getIndexData').then(()=>{
       console.log('获取到的首页数据----',this.indexData)
-      this.inforCardData[0].count = this.indexData.total_user
-      this.inforCardData[1].count = this.indexData.total_order
-      this.inforCardData[2].count = this.indexData.total_use_device
-      this.inforCardData[3].count = this.indexData.total_time/60/60
+      if(this.inforCardData.length){
+        this.inforCardData[0].count = this.indexData.total_user
+        this.inforCardData[1].count = this.indexData.total_order
+        this.inforCardData[2].count = this.indexData.total_use_device
+        this.inforCardData[3].count = this.indexData.total_time/60/60
+      }
     })
   },
   mounted () {

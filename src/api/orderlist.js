@@ -5,7 +5,6 @@ export const getOrderList = (data) => {
     url: 'mobile/lockOrder/pageByLockOrder',
     data: {
       ...data,
-      agency_user_id:app.$store.state.user.token==100000000?'':app.$store.state.user.token,
     },
     headers:{
       "ticket":app.$store.state.user.token

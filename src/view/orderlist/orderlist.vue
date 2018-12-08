@@ -14,6 +14,10 @@
           <span>设备编号：</span>
           <Input v-model="formInline.lock_no" placeholder="请输入设备编号" number clearable style="width: 200px" />
         </FormItem>
+        <FormItem prop="agency_user_id" v-if="access[0] === 1">
+          <span>代理商ID：</span>
+          <Input v-model="formInline.agency_user_id" placeholder="请输入代理商ID" number clearable style="width: 200px" />
+        </FormItem>
         <FormItem>
           <Button type="primary" @click="handleSubmit('formInline')">搜索</Button>
           <Button @click="handleReset('formInline')" style="margin-left: 8px">清除条件</Button>
@@ -33,6 +37,7 @@
 <script>
   import table2excel from '@/libs/table2excel.js'
   import { getOrderList } from '@/api/orderlist'
+  import {mapGetters} from 'vuex'
   export default {
     name: 'orderlist',
     components: {
@@ -44,6 +49,7 @@
           lock_no: '',
           date: '',
           user_id:'',
+          agency_user_id:'',
         },
         pageSize: 15,
         ruleInline: {
@@ -140,6 +146,9 @@
       }
     },
     computed: {
+      ...mapGetters({
+        'access':'getAccess'
+      })
     },
     created () {
       // 组件实例化生命周期
@@ -152,12 +161,14 @@
       // 请求订单列表
       getOrderList (p) {
         return new Promise((resolve, reject)=>{
+          var agency_user_id = app.$store.state.user.token==100000000?this.formInline.agency_user_id:app.$store.state.user.token
           let data = {
             pageNum: p, pageSize: this.pageSize,
             user_id:this.formInline.user_id,
             lock_no: this.formInline.lock_no,
             start_time:this.formInline.date[0],
             end_time:this.formInline.date[1],
+            agency_user_id:agency_user_id,
           }
           this.$Spin.show()
           getOrderList(data).then(res => {
@@ -248,7 +259,7 @@
     align-items: center;
     margin-bottom: 30px;
     .ivu-form-item{
-      margin-bottom: 0;
+      margin-bottom: 20px;
     }
   }
 </style>

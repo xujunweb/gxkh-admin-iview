@@ -112,28 +112,10 @@
           ]
         },
         columns: [
-          {
-            title: '二维码编号',
-            key: 'qr_code_no'
-          },
-          {
-            title: '设备编号',
-            key: 'lock_no',
-            render:(h, params)=>{
-              if(app.$store.state.user.access[0] == '1'){
-                return h('div', params.row.lock_no)
-              }else {
-                return h('div', '-')
-              }
-            }
-          },
-          {
-            title: '柜子编号',
-            key: 'device_no'
-          },
-          {
-            title: '设备密码',
-            key: 'lock_pwd',
+          {title: '二维码编号', key: 'qr_code_no'},
+          {title: '设备编号', key: 'lock_no',},
+          {title: '柜子编号', key: 'device_no'},
+          {title: '设备密码', key: 'lock_pwd',
             render:(h, params)=>{
               if(app.$store.state.user.access[0] == '1'){
                 return h('div', params.row.lock_pwd)
@@ -142,66 +124,71 @@
               }
             }
           },
-          {
-            title: '设备秘钥',
-            key: 'lock_key'
+          {title: '设备秘钥', key: 'lock_key',
+            render:(h, params)=>{
+              if(app.$store.state.user.access[0] == '1'){
+                return h('div', params.row.lock_key)
+              }else {
+                return h('div', '-')
+              }
+            }
           },
-          {
-            title: '锁MAC',
-            key: 'lock_mac'
+          {title: '锁MAC', key: 'lock_mac',
+            render:(h, params)=>{
+              if(app.$store.state.user.access[0] == '1'){
+                return h('div', params.row.lock_mac)
+              }else {
+                return h('div', '-')
+              }
+            }
           },
-          {
-            title: '锁所属医院',
-            key: 'hospital'
+          {title: '锁所属医院', key: 'hospital'},
+          {title: '锁每小时价格', key: 'unit_price',
+            render: (h, params) => {
+              return h('div', params.row.unit_price/100)
+            }
           },
-          {
-            title: '锁状态',
-            key: 'state',
+          {title: '电量', key: 'battery',
+            render: (h, params) => {
+              return h('div', params.row.battery+"%")
+            }
+          },
+          {title: '锁状态', key: 'state',
             render: (h, params) => {
               return h('div', this.stateMap[params.row.state])
             }
           },
-          {
-            title: '操作',
-            key: 'action',
-            width: 150,
-            align: 'center',
+          {title: '操作', key: 'action', width: 200, align: 'center',
             render: (h, params) => {
               if(this.access[0] == '1'){
                 return h('div', [
                   h('Button', {
-                    props: {
-                      type: 'primary',
-                      size: 'small'
-                    },
-                    style: {
-                      marginRight: '5px'
-                    },
-                    on: {
-                      click: () => {
+                    props: {type: 'primary', size: 'small'},
+                    style: {marginRight: '5px'},
+                    on: {click: () => {
                         this.selectIndex = params.index
                         this.showEdit = true
                         this.inputUserId = this.tableData[params.index].user_id
                         this.hospital = this.tableData[params.index].hospital
-                      }
-                    }
-                  }, '编辑信息')
+                    }}
+                  }, '编辑信息'),
+                  h('Button', {
+                    props: {type: 'primary', size: 'small'},
+                    style: {marginRight: '5px'},
+                    on: {click: () => {
+                        this.selectIndex = params.index
+                        this.showEdit = true
+                        this.inputUserId = this.tableData[params.index].user_id
+                        this.hospital = this.tableData[params.index].hospital
+                      }}
+                  }, '编辑价格'),
                 ])
               }else {
                 return h('div', [
                   h('Button', {
-                    props: {
-                      type: 'primary',
-                      size: 'small'
-                    },
-                    style: {
-                      marginRight: '5px'
-                    },
-                    on: {
-                      click: () => {
-                        this.show(params.index)
-                      }
-                    }
+                    props: {type: 'primary', size: 'small'},
+                    style: {marginRight: '5px'},
+                    on: {click: () => {this.show(params.index)}}
                   }, '查看')
                 ])
               }
@@ -225,14 +212,9 @@
         this.$Spin.show({
           render: (h) => {
             return h('div', [
-              h('Icon', {
-                'class': 'demo-spin-icon-load',
-                props: {
-                  type: 'ios-loading',
-                  size: 18
-                }
-              }),
-              h('div', 'Loading')
+              h('Icon', {'class': 'demo-spin-icon-load',
+                props: {type: 'ios-loading', size: 18}
+              }), h('div', 'Loading')
             ])
           }
         })

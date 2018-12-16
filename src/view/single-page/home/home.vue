@@ -8,23 +8,7 @@
         </infor-card>
       </div>
     </div>
-    <!--<Row :gutter="20" style="margin-top: 20px;">-->
-      <!--<i-col span="8">-->
-        <!--<Card shadow>-->
-          <!--<chart-pie style="height: 300px;" :value="pieData" text="用户访问来源"></chart-pie>-->
-        <!--</Card>-->
-      <!--</i-col>-->
-      <!--<i-col span="16">-->
-        <!--<Card shadow>-->
-          <!--<chart-bar style="height: 300px;" :value="barData" text="每周用户活跃量"/>-->
-        <!--</Card>-->
-      <!--</i-col>-->
-    <!--</Row>-->
-    <!--<Row style="margin-top: 20px;">-->
-      <!--<Card shadow>-->
-        <!--<example style="height: 310px;"/>-->
-      <!--</Card>-->
-    <!--</Row>-->
+    <!--<selectMore :pdefaultValue="defaultValue"></selectMore>-->
   </div>
 </template>
 
@@ -32,6 +16,7 @@
 import {mapGetters} from 'vuex'
 import InforCard from '_c/info-card'
 import CountTo from '_c/count-to'
+import selectMore from './test'
 // import { ChartPie, ChartBar } from '_c/charts'
 // import Example from './example.vue'
 export default {
@@ -39,6 +24,7 @@ export default {
   components: {
     InforCard,
     CountTo,
+    selectMore
     // ChartPie,
     // ChartBar,
     // Example
@@ -60,7 +46,8 @@ export default {
         Fri: 24643,
         Sat: 1322,
         Sun: 1324
-      }
+      },
+      defaultValue:[],
     }
   },
   computed:{
@@ -80,12 +67,14 @@ export default {
         this.inforCardData[3].count = this.indexData.total_time/60/60
       }
     })
+    // setTimeout(()=>{
+    //   this.defaultValue = ["1109", "110908", "11090806"]
+    // },3000)
   },
   mounted () {
     //
   },
   methods:{
-
   }
 }
 </script>

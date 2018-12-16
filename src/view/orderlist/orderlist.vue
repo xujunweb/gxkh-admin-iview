@@ -119,12 +119,12 @@
             }
           },
           {
-            title: '设备编号',
-            key: 'lock_no'
-          },
-          {
             title: '订单id',
             key: 'id'
+          },
+          {
+            title: '设备编号',
+            key: 'lock_no'
           },
           {
             title: '订单金额',

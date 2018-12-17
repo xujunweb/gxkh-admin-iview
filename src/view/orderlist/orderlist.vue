@@ -91,13 +91,8 @@
           ]
         },
         columns: [
-          {
-            title: '订单号',
-            key: 'order_no'
-          },
-          {
-            title: '用户ID',
-            key: 'user_id',
+          {title: '订单号', key: 'order_no'},
+          {title: '用户ID', key: 'user_id',
             render:(h, params)=>{
               if(app.$store.state.user.access[0] == '1'){
                 return h('div', params.row.user_id)
@@ -106,41 +101,22 @@
               }
             }
           },
-          {
-            title: '用户手机',
-            key: 'user',
+          {title: '用户手机', key: 'user',
             render:(h, params)=>{
               if(app.$store.state.user.access[0] == '1'){
-                return h('div', params.row.user.telphone)
-              }else {
-                return h('div', '-')
-              }
-
+                return h('div', params.row.user&&params.row.user.telphone)
+              }else {return h('div', '-')}
             }
-          },
-          {
-            title: '订单id',
-            key: 'id'
-          },
-          {
-            title: '设备编号',
-            key: 'lock_no'
-          },
-          {
-            title: '订单金额',
-            key: 'fee',
+            },
+          {title: '订单id', key: 'id'},
+          {title: '设备编号', key: 'lock_no'},
+          {title: '订单金额', key: 'fee',
             render: (h, params) => {
               return h('div', Math.abs(params.row.fee/100)+'元')
             }
           },
-          {
-            title: '开始时间',
-            key: 'start_time'
-          },
-          {
-            title: '结束时间',
-            key: 'end_time'
-          },
+          {title: '开始时间', key: 'start_time'},
+          {title: '结束时间', key: 'end_time'},
         ],
         tableData: []
       }

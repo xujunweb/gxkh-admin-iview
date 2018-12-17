@@ -63,12 +63,20 @@
       <div class="input-item"><span>用户ID：</span><Input v-model="inputUserId" placeholder="请输入用户ID" style="width: 200px" /></div>
       <div class="input-item"><span>绑定医院：</span><Input v-model="hospital" placeholder="请输入医院" style="width: 200px" /></div>
     </Modal>
+    <Modal
+      v-model="showEditPrice"
+      title="编辑锁价格"
+      @on-ok="updateDevicePrice"
+      @on-cancel="cancel">
+      <h3>锁二维码编号：{{this.tableData[this.selectIndex]&&this.tableData[this.selectIndex].qr_code_no}}</h3>
+      <div class="input-item"><span>价格：</span><Input v-model="inputPrice" placeholder="请输入价格" style="width: 200px" /></div>
+    </Modal>
   </div>
 </template>
 
 <script>
   // import table2excel from '@/libs/table2excel.js'
-  import { getDeviceList,updateDevice } from '@/api/devicelist'
+  import { getDeviceList,updateDevice,updateDevicePrice } from '@/api/devicelist'
   import {mapGetters} from 'vuex'
   export default {
     name: 'devicelist',
@@ -79,6 +87,7 @@
         total:0,
         inputUserId:'', //绑定的用户ID
         hospital:'',  //绑定的医院
+        inputPrice:'',  //锁价格
         formInline: {
           lock_no: '',
           qr_code_no:'',  //二维码编号
@@ -95,14 +104,11 @@
           {value:2,label:'禁用'},
           {value:3,label:'使用中'},
         ],
-        stateMap:{
-          0:'正常',
-          1:'维修中',
-          2:'禁用',
-          3:'使用中'
-        },
+        stateMap:{0:'正常', 1:'维修中', 2:'禁用', 3:'使用中'},
         pageSize: 15,
         showEdit:false,
+        showEditPrice:false,
+        thisPage:1,
         selectIndex:0,     //选中的索引
         ruleInline: {
           user_id: [
@@ -150,7 +156,7 @@
           },
           {title: '电量', key: 'battery',
             render: (h, params) => {
-              return h('div', params.row.battery+"%")
+              return h('div', Math.abs(params.row.battery)+"%")
             }
           },
           {title: '锁状态', key: 'state',
@@ -177,9 +183,8 @@
                     style: {marginRight: '5px'},
                     on: {click: () => {
                         this.selectIndex = params.index
-                        this.showEdit = true
-                        this.inputUserId = this.tableData[params.index].user_id
-                        this.hospital = this.tableData[params.index].hospital
+                        this.showEditPrice = true
+                        this.inputPrice = this.tableData[params.index].unit_price/100
                       }}
                   }, '编辑价格'),
                 ])
@@ -226,7 +231,7 @@
       getDeviceList (p) {
         return new Promise((resolve, reject)=>{
           let data = {
-            pageNum: p, pageSize: this.pageSize,
+            pageNum: p||this.thisPage, pageSize: this.pageSize,
             ...this.formInline
           }
           getDeviceList(data).then(res => {
@@ -274,9 +279,29 @@
           this.$Message.error('操作失败!')
         })
       },
+      //编辑锁价格
+      updateDevicePrice(){
+        var data = {
+          // id:this.tableData[this.selectIndex].id,
+          unit_price:this.inputPrice*100,
+          user_id:this.tableData[this.selectIndex].user_id,
+          hospital:this.tableData[this.selectIndex].hospital,
+        }
+        updateDevicePrice(data).then((res)=>{
+          console.log('编辑锁信息--------',res)
+          if(res.data.code === 100){
+            //重新请求列表
+            this.getDeviceList()
+            this.$Message.success('操作成功!')
+          }
+        }).catch(err => {
+          this.$Message.error('操作失败!')
+        })
+      },
       //关闭弹窗
       cancel(){
         this.showEdit = false
+        this.showEditPrice = false
       },
       show (index) {
         this.$Modal.info({
@@ -298,6 +323,7 @@
       // 分页切换
       pageSwitch (page) {
         console.log(page)
+        this.thisPage = page
         this.getDeviceList(page)
       },
       // 导出excel

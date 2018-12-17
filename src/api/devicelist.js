@@ -32,4 +32,16 @@ export const updateDevice = (data) => {
     method: 'post'
   })
 }
-
+//编辑锁价格
+export const updateDevicePrice = (data) => {
+  return axios.request({
+    url: 'mobile/lockInfo/updateUnitPrice',
+    data: {
+      ...data
+    },
+    headers:{
+      "ticket":app.$store.state.user.token
+    },
+    method: 'post'
+  })
+}

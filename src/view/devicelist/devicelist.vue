@@ -150,7 +150,7 @@
           },
           {title: '锁所属医院', key: 'hospital'},
           {title: '锁每小时价格', key: 'unit_price',
-            render: (h, params) => {
+              render: (h, params) => {
               return h('div', params.row.unit_price/100)
             }
           },

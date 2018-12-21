@@ -1,7 +1,6 @@
 import { getIndexData } from '@/api/home'
 import {getCookies} from '@/libs/util'
-import axios from '@/libs/api.request'
-import originAxios from 'axios'
+import config from '../../config'
 export default {
   state: {
     indexData: {},
@@ -45,27 +44,14 @@ export default {
         })
       })
     },
-    async exportOrderToExcel (store, args) {
+    exportOrderToExcel (store, args) {
       console.log('进来了')
-      let CancelToken = originAxios.CancelToken
-      let source = CancelToken.source()
-      store.commit('UPDATE_SOURCE', source)
-      let data = await axios.request({
-        url:'mobile/lockOrder/exportLockOrderData',
-        data: {...args},
-        headers:{
-          "ticket":app.$store.state.user.token,
-          // 'Content-Type': 'application/octets-stream',
-          "Content-Disposition":'attachment;filename=kpi.xlsx'
-        },
-        method: 'post',
-        responseType: 'blob',
-        cancelToken: source.token,
-        noLoading: true,
-        timeout: 1000000
-      })
-      console.log('data', data)
-      return data
+      var params = ''
+      for (let key in args){
+        params += key+'='+args[key]+'&'
+      }
+      params.substring(0,params.length-1)
+      window.open(config.baseUrl.pro+'mobile/lockOrder/exportLockOrderData?'+params)
     },
   }
 }

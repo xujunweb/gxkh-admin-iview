@@ -43,6 +43,7 @@
           :max-size="5048"
           :on-format-error="handleFormatError"
           :on-exceeded-size="handleMaxSize"
+          :headers="headers"
           action="https://www.chmbkh.com/mobile/lockInfo/importLockInfoData" v-if="access[0] == '1'">
           <Button icon="ios-cloud-upload-outline">导入设备</Button>
         </Upload>
@@ -84,6 +85,9 @@
     },
     data () {
       return {
+        headers:{
+          "ticket":app.$store.state.user.userId
+        },
         total:0,
         inputUserId:'', //绑定的用户ID
         hospital:'',  //绑定的医院

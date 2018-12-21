@@ -13,7 +13,7 @@ class HttpRequest {
       baseURL: this.baseUrl,
       headers: {
         // 'Access-Control-Allow-Origin': '*',
-        // 'Content-Type': 'application/json'
+        'Content-Type': 'application/json'
       },
     }
     return config
@@ -27,6 +27,7 @@ class HttpRequest {
   interceptors (instance, url) {
     // 请求拦截
     instance.interceptors.request.use(config => {
+      console.log('请求配置-----',config)
       // 添加全局的loading...
       if (!Object.keys(this.queue).length) {
         // Spin.show() // 不建议开启，因为界面不友好
@@ -48,7 +49,8 @@ class HttpRequest {
   }
   request (options) {
     const instance = axios.create()
-    options = Object.assign(this.getInsideConfig(), options)
+    // options = Object.assign(this.getInsideConfig(), options)
+    options = {...this.getInsideConfig(),...options}
     this.interceptors(instance, options.url)
     return instance(options)
   }

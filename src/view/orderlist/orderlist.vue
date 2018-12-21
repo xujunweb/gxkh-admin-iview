@@ -23,13 +23,24 @@
           <Button @click="handleReset('formInline')" style="margin-left: 8px">清除条件</Button>
         </FormItem>
       </Form>
-      <Button size="large" icon="ios-download-outline" type="primary" @click="exportExcel">导出表格</Button>
+      <Button size="large" icon="ios-download-outline" type="primary" @click="exportResult">导出表格</Button>
     </div>
     <Table border :columns="columns" :data="tableData" stripe ref="userTable"></Table>
     <div class="page">
       <Page :total="total" show-total show-elevator :page-size="pageSize" @on-change="pageSwitch" class="pagecom" />
       <span>每页</span><Input v-model="pageSize" number @on-enter="getOrderList(1)" style="width: 60px;" class="pagesize" /><span>条</span>
     </div>
+    <Modal v-model="isExport" width="400">
+      <p slot="header" style="text-align:center">
+        导出订单列表
+      </p>
+      <div class="dynamic_cont">
+        <p>数据导出中，请勿刷新</p>
+      </div>
+      <div slot="footer">
+        <Button type="success" size="large" long :loading="modal_loading" @click="interrupt">中断导出</Button>
+      </div>
+    </Modal>
     <a id="hrefToExportTable" style="postion: absolute;left: -10px;top: -10px;width: 0px;height: 0px;"></a>
   </div>
 </template>
@@ -115,10 +126,17 @@
               return h('div', Math.abs(params.row.fee/100)+'元')
             }
           },
+          {title: '欠费金额', key: 'diff_fee',
+            render: (h, params) => {
+              return h('div', Math.abs(params.row.diff_fee/100)+'元')
+            }
+          },
           {title: '开始时间', key: 'start_time'},
           {title: '结束时间', key: 'end_time'},
         ],
-        tableData: []
+        tableData: [],
+        isExport:false,
+        modal_loading: false,
       }
     },
     computed: {
@@ -161,6 +179,48 @@
             console.log(err)
           })
         })
+      },
+      //导出搜索结果
+      exportResult(){
+        this.isExport = true
+        var agency_user_id = app.$store.state.user.token==100000000?this.formInline.agency_user_id:app.$store.state.user.token
+        let data = {
+          user_id:this.formInline.user_id,
+          lock_no: this.formInline.lock_no,
+          start_time:this.formInline.date[0],
+          end_time:this.formInline.date[1],
+          agency_user_id:agency_user_id,
+        }
+        this.$store.dispatch('exportOrderToExcel', data).then((res) => {
+          this.isExport = false
+          console.log('数据导出结果----------', res)
+          var filterDate = this.constructor.filter('date')
+          var fileName = filterDate(new Date())
+          console.log('当前时间------', fileName)
+          if (window.navigator.msSaveOrOpenBlob) {
+            navigator.msSaveBlob(res.data, fileName);
+            return
+          }
+          // var blob = new Blob([res.data], {type: 'application/vnd.ms-excel'})
+          var blob = new Blob([res.data], {type: 'application/octets-stream'})
+          var objectUrl = window.URL.createObjectURL(blob)
+          var a = document.createElement('a')
+          document.body.appendChild(a)
+          a.setAttribute('style', 'display:none')
+          a.setAttribute('href', objectUrl)
+          a.setAttribute('download', fileName + '.xls')
+          // a.setAttribute('download', fileName + '.xlsx')
+          a.click()
+          window.URL.revokeObjectURL(objectUrl)
+          document.body.removeChild(a) // 完成以后释放节点
+        }).catch(() => {
+
+        })
+      },
+      // 中断导出
+      interrupt () {
+        this.isExport = false
+        this.$store.state.home.source.cancel()
       },
       // 发起搜索
       handleSubmit (name) {

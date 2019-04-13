@@ -75,3 +75,14 @@ export const getAllinfo = () => {
     }
   })
 }
+// 修改用户信息
+export const updateUser = (data) => {
+  return axios.request({
+    url: 'mobile/user/updateByUserId',
+    data: data,
+    method: 'post',
+    headers:{
+      "ticket":app.$store.state.user.token
+    }
+  })
+}

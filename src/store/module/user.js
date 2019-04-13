@@ -7,7 +7,13 @@ export default {
     userId: '',
     avatorImgPath: '',
     token: getToken(),
-    access: JSON.parse(getCookies('access'))||[]
+    access: JSON.parse(getCookies('access'))||[],
+    typeMap:{
+      0:'普通用户',
+      1:'管理员',
+      2:'代理商',
+      3:'工作人员'
+    },
   },
   getters: {
     getUserLoginInfo (state) {

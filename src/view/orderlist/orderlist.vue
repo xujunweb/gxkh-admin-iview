@@ -37,7 +37,7 @@
 <script>
   import table2excel from '@/libs/table2excel.js'
   import { getOrderList } from '@/api/orderlist'
-  import {mapGetters} from 'vuex'
+  import {mapGetters, mapState} from 'vuex'
   export default {
     name: 'orderlist',
     components: {
@@ -106,8 +106,11 @@
               if(app.$store.state.user.access[0] == '1'){
                 return h('div', params.row.user&&params.row.user.telphone)
               }else {return h('div', '-')}
-            }
-            },
+          }},
+          {title: '用户身份', key: 'type',
+            render: (h, params) => {
+              return h('div', this.typeMap[params.row.user.type])
+          }},
           {title: '订单id', key: 'id'},
           {title: '设备编号', key: 'lock_no'},
           {title: '订单金额', key: 'fee',
@@ -131,6 +134,11 @@
     computed: {
       ...mapGetters({
         'access':'getAccess'
+      }),
+      ...mapState({
+        typeMap(state){
+          return state.user.typeMap
+        }
       })
     },
     created () {

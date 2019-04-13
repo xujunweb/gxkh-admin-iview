@@ -28,22 +28,53 @@
         <Page :total="total" show-total show-elevator :page-size="pageSize" @on-change="pageSwitch" />
       </div>
       <a id="hrefToExportTable" style="postion: absolute;left: -10px;top: -10px;width: 0px;height: 0px;"></a>
+      <!-- 编辑用户信息窗口 -->
+      <Modal
+        v-model="showEdit"
+        title="编辑用户信息"
+        @on-ok="updateUser">
+        <h3>用户ID：{{this.formEdit.id}}</h3>
+        <h3>用户手机号：{{this.formEdit.telphone}}</h3>
+        <Form ref="formEdit" :model="formEdit" :rules="ruleInline">
+          <FormItem prop="type" v-if="formEdit.type != 1">
+            <span>用户身份：</span>
+            <Select v-model="formEdit.type" style="width:200px">
+              <Option v-for="item in editTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+          </FormItem>
+          <FormItem prop="type">
+            <span>用户余额：</span>
+            <Input v-model="formEdit.money" placeholder="请输入价格" style="width: 200px" />
+          </FormItem>
+        </Form>
+      </Modal>
     </div>
 </template>
 
 <script>
 import table2excel from '@/libs/table2excel.js'
-import { getUserList } from '@/api/user'
+import { getUserList,updateUser } from '@/api/user'
+import { mapState } from 'vuex'
 export default {
   name: 'userlist',
   components: {
   },
   data () {
     return {
+      showEdit:false,
       total:0,
+      //搜索条件
       formInline: {
         telphone: '',
         type: ''
+      },
+      //编辑条件
+      formEdit: {
+        type: '',
+        id:'',    //不能编辑
+        telphone:'',  //手机号
+        money:'', //价格
+        index:'',
       },
       pageSize: 15,
       ruleInline: {
@@ -58,102 +89,50 @@ export default {
         {value:'0',label:'普通用户'},
         {value:'1',label:'管理员'},
         {value:'2',label:'代理商'},
+        {value:'3',label:'工作人员'},
       ],
-      typeMap:{
-        0:'普通用户',
-        1:'管理员',
-        2:'代理商'
-      },
-      dateoptions: {
-        shortcuts: [
-          {
-            text: '1周内',
-            value () {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-              return [start, end]
-            }
-          },
-          {
-            text: '1个月',
-            value () {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-              return [start, end]
-            }
-          },
-          {
-            text: '3个月内',
-            value () {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-              return [start, end]
-            }
-          }
-        ]
-      },
+      editTypeList:[
+        {value:'0',label:'普通用户'},
+        {value:'2',label:'代理商'},
+        {value:'3',label:'工作人员'},
+      ],
       columns: [
-        {
-          title: '手机号',
-          key: 'telphone'
-        },
-        {
-          title: '用户ID',
-          key: 'id'
-        },
-        {
-          title: '用户身份',
-          key: 'type',
+        {title: '手机号', key: 'telphone'},
+        {title: '用户ID', key: 'id'},
+        {title: '用户身份', key: 'type',
           render: (h, params) => {
             return h('div', this.typeMap[params.row.type])
-          }
-        },
-        {
-          title: '使用总时间',
-          key: 'total_time',
+        }},
+        {title: '使用总时间', key: 'total_time',
           render: (h, params) => {
             return h('div', (params.row.total_time/60/60).toFixed(2)+'h')
-          }
-        },
-        {
-          title: '用户余额',
-          key: 'money',
+        }},
+        {title: '用户余额', key: 'money',
           render:(h, params)=>{
             return h('div',(params.row.money/100).toFixed(2))
-          }
-        },
-        {
-          title: '用户积分',
-          key: 'score'
-        },
-        {
-          title: '注册时间',
-          key: 'register_time'
-        },
-        {
-          title: '操作',
-          key: 'action',
-          width: 150,
-          align: 'center',
+        }},
+        {title: '用户积分', key: 'score'},
+        {title: '注册时间', key: 'register_time'},
+        {title: '操作', key: 'action', width: 150, align: 'center',
           render: (h, params) => {
             return h('div', [
               h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.show(params.index)
-                  }
-                }
-              }, '查看')
+                props: {type: 'primary', size: 'small'},
+                style: {marginRight: '5px'},
+                on: {click: () => {this.show(params.index)}}
+              }, '查看'),
+              h('Button', {
+                props: {type: 'primary', size: 'small'},
+                style: {marginRight: '5px'},
+                on: {click: () => {
+                    this.formEdit.index = params.index
+                    this.formEdit.id = params.row.id
+                    this.formEdit.telphone = params.row.telphone
+                    this.formEdit.type = params.row.type
+                    this.formEdit.money = params.row.money/100
+                    this.showEdit = true
+                }}
+              }, '编辑')
             ])
           }
         }
@@ -162,6 +141,11 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      typeMap(state){
+        return state.user.typeMap
+      }
+    }),
   },
   created () {
     // 组件实例化生命周期
@@ -220,6 +204,24 @@ export default {
     },
     remove (index) {
       this.tableData.splice(index, 1)
+    },
+    //编辑用户信息
+    updateUser(){
+      var data = {
+        user_id:this.formEdit.id,
+        type:this.formEdit.type,
+        money:this.formEdit.money*100,
+      }
+      updateUser(data).then((res)=>{
+        console.log('编辑用户信息--------',res)
+        if(res.data.code === 100){
+          this.tableData[this.formEdit.index].type = this.formEdit.type
+          this.tableData[this.formEdit.index].money = this.formEdit.money*100
+          this.$Message.success('操作成功!')
+        }
+      }).catch(err => {
+        this.$Message.error('操作失败!')
+      })
     },
     // 分页切换
     pageSwitch (page) {

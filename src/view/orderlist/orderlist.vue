@@ -152,7 +152,10 @@
       // 请求订单列表
       getOrderList (p) {
         return new Promise((resolve, reject)=>{
-          var agency_user_id = app.$store.state.user.token==100000000?this.formInline.agency_user_id:app.$store.state.user.token
+          var agency_user_id = app.$store.state.user.token
+          if (app.$store.state.user.acc.indexOf(app.$store.state.user.token)>-1){
+            agency_user_id = this.formInline.agency_user_id
+          }
           let data = {
             pageNum: p, pageSize: this.pageSize,
             user_id:this.formInline.user_id,

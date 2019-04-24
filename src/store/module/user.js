@@ -14,6 +14,7 @@ export default {
       2:'代理商',
       3:'工作人员'
     },
+    acc:  [100000003,100000009,100000000]    //查看全部订单的账号
   },
   getters: {
     getUserLoginInfo (state) {

@@ -113,14 +113,19 @@
           }},
           {title: '订单id', key: 'id'},
           {title: '设备编号', key: 'lock_no'},
-          {title: '订单金额', key: 'fee',
+          {title: '实付金额', key: 'fee',
             render: (h, params) => {
-              return h('div', Math.abs(params.row.fee/100)+'元')
+              return h('div', Math.abs((params.row.fee-params.row.diff_fee)/100)+'元')
             }
           },
           {title: '欠费金额', key: 'diff_fee',
             render: (h, params) => {
               return h('div', Math.abs(params.row.diff_fee/100)+'元')
+            }
+          },
+          {title: '订单金额', key: 'fee',
+            render: (h, params) => {
+              return h('div', Math.abs(params.row.fee/100)+'元')
             }
           },
           {title: '开始时间', key: 'start_time'},

@@ -16,6 +16,9 @@
               <Option v-for="item in typeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
           </FormItem>
+          <FormItem prop="money_lt_zero">
+            <Checkbox v-model="formInline.money_lt_zero" true-value="1" false-value="0">欠费用户</Checkbox>
+          </FormItem>
           <FormItem>
             <Button type="primary" @click="handleSubmit('formInline')">搜索</Button>
             <Button @click="handleReset('formInline')" style="margin-left: 8px">清除条件</Button>
@@ -66,7 +69,8 @@ export default {
       //搜索条件
       formInline: {
         telphone: '',
-        type: ''
+        type: '',
+        money_lt_zero:'0',
       },
       //编辑条件
       formEdit: {

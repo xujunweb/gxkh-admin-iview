@@ -63,6 +63,7 @@
       <h3>锁二维码编号：{{this.tableData[this.selectIndex]&&this.tableData[this.selectIndex].qr_code_no}}</h3>
       <div class="input-item"><span>用户ID：</span><Input v-model="inputUserId" placeholder="请输入用户ID" style="width: 200px" /></div>
       <div class="input-item"><span>绑定医院：</span><Input v-model="hospital" placeholder="请输入医院" style="width: 200px" /></div>
+      <div class="input-item"><span>科室：</span><Input v-model="department" placeholder="请输入科室" style="width: 200px" /></div>
     </Modal>
     <Modal
       v-model="showEditPrice"
@@ -91,6 +92,7 @@
         total:0,
         inputUserId:'', //绑定的用户ID
         hospital:'',  //绑定的医院
+        department:'',  //绑定的科室
         inputPrice:'',  //锁价格
         formInline: {
           lock_no: '',
@@ -124,7 +126,7 @@
         columns: [
           {title: '二维码编号', key: 'qr_code_no'},
           {title: '设备编号', key: 'lock_no',},
-          {title: '柜子编号', key: 'device_no'},
+          // {title: '柜子编号', key: 'device_no'},
           {title: '设备密码', key: 'lock_pwd',
             render:(h, params)=>{
               if(app.$store.state.user.access[0] == '1'){
@@ -153,7 +155,8 @@
             }
           },
           {title: '锁所属医院', key: 'hospital'},
-          {title: '锁每小时价格', key: 'unit_price',
+          {title: '科室', key: 'department'},
+          {title: '单价', key: 'unit_price',
               render: (h, params) => {
               return h('div', params.row.unit_price/100)
             }
@@ -270,13 +273,15 @@
         var data = {
           id:this.tableData[this.selectIndex].id,
           user_id:this.inputUserId,
-          hospital:this.hospital
+          hospital:this.hospital,
+          department:this.department,
         }
         updateDevice(data).then((res)=>{
           console.log('编辑锁信息--------',res)
           if(res.data.code === 100){
             this.tableData[this.selectIndex].user_id = this.inputUserId
             this.tableData[this.selectIndex].hospital = this.hospital
+            this.tableData[this.selectIndex].department = this.department
             this.$Message.success('操作成功!')
           }
         }).catch(err => {

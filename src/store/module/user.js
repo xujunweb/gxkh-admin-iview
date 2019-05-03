@@ -9,10 +9,10 @@ export default {
     token: getToken(),
     access: JSON.parse(getCookies('access'))||[],
     typeMap:{
-      0:'普通用户',
-      1:'管理员',
-      2:'代理商',
-      3:'工作人员'
+      0:'PT',
+      1:'GL',
+      2:'DL',
+      3:'GZ'
     },
     acc:  [100000003,100000009,100000000,]    //查看全部订单的账号
   },

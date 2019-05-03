@@ -52,6 +52,13 @@ export default {
           key: 'device_no'
         },
         {
+          title: '用户手机号',
+          key: 'user',
+          render:(h, params)=>{
+            return h('span',params.row.user.telphone)
+          }
+        },
+        {
           title: '故障类型',
           width:120,
           key: 'fault_type',
@@ -89,6 +96,10 @@ export default {
             }
             return h('div',imgs)
           }
+        },
+        {
+          title: '提交时间',
+          key: 'insert_time'
         },
         {
           title: '是否处理',

@@ -18,6 +18,13 @@
           <span>代理商ID：</span>
           <Input v-model="formInline.agency_user_id" placeholder="请输入代理商ID" number clearable style="width: 200px" />
         </FormItem>
+        <FormItem prop="hospital" v-if="access[0] === 1">
+          <span>所属医院：</span>
+          <Input v-model="formInline.hospital" placeholder="请输入医院" number clearable style="width: 200px" />
+        </FormItem>
+        <FormItem prop="diff_fee_lt_zero">
+          <Checkbox v-model="formInline.diff_fee_lt_zero">欠费订单</Checkbox>
+        </FormItem>
         <FormItem>
           <Button type="primary" @click="handleSubmit('formInline')">搜索</Button>
           <Button @click="handleReset('formInline')" style="margin-left: 8px">清除条件</Button>
@@ -50,6 +57,8 @@
           date: '',
           user_id:'',
           agency_user_id:'',
+          hospital:'',
+          diff_fee_lt_zero:false,
         },
         pageSize: 15,
         ruleInline: {
@@ -113,6 +122,7 @@
           }},
           {title: '订单id', key: 'id'},
           {title: '设备编号', key: 'lock_no'},
+          {title: '二维码编号', key: 'qr_code_no'},
           {title: '实付金额', key: 'fee',
             render: (h, params) => {
               return h('div', Math.abs((params.row.fee-params.row.diff_fee)/100)+'元')
@@ -127,6 +137,8 @@
             render: (h, params) => {
               return h('div', Math.abs(params.row.fee/100)+'元')
             }
+          },
+          {title: '医院', key: 'hospital',
           },
           {title: '开始时间', key: 'start_time'},
           {title: '结束时间', key: 'end_time'},
@@ -164,6 +176,8 @@
             start_time:this.formInline.date[0],
             end_time:this.formInline.date[1],
             agency_user_id:this.formInline.agency_user_id,
+            hospital:this.formInline.hospital,
+            diff_fee_lt_zero:this.formInline.diff_fee_lt_zero?'1':0,
           }
           this.$Spin.show()
           getOrderList(data).then(res => {

@@ -61,9 +61,10 @@
       @on-ok="updateDevice"
       @on-cancel="cancel">
       <h3>锁二维码编号：{{this.tableData[this.selectIndex]&&this.tableData[this.selectIndex].qr_code_no}}</h3>
-      <div class="input-item"><span>用户ID：</span><Input v-model="inputUserId" placeholder="请输入用户ID" style="width: 200px" /></div>
+      <div class="input-item"><span>代理商：</span><Input v-model="inputUserId" placeholder="请输入用户ID" style="width: 200px" /></div>
       <div class="input-item"><span>绑定医院：</span><Input v-model="hospital" placeholder="请输入医院" style="width: 200px" /></div>
       <div class="input-item"><span>科室：</span><Input v-model="department" placeholder="请输入科室" style="width: 200px" /></div>
+      <div class="input-item"><span>其他用户：</span><Input v-model="bind_user" placeholder="请输入用户ID,使用英文的逗号隔开" style="width: 400px" /></div>
     </Modal>
     <Modal
       v-model="showEditPrice"
@@ -93,6 +94,7 @@
         inputUserId:'', //绑定的用户ID
         hospital:'',  //绑定的医院
         department:'',  //绑定的科室
+        bind_user:'', //绑定的用户
         inputPrice:'',  //锁价格
         formInline: {
           lock_no: '',
@@ -183,6 +185,8 @@
                         this.showEdit = true
                         this.inputUserId = this.tableData[params.index].user_id
                         this.hospital = this.tableData[params.index].hospital
+                        this.department = this.tableData[params.index].department
+                        this.bind_user = this.tableData[params.index].bind_user
                     }}
                   }, '编辑信息'),
                   h('Button', {
@@ -270,11 +274,16 @@
       },
       //编辑锁信息
       updateDevice(){
+        if(this.bind_user.split(',').length > 7){
+          this.$Message.error('不得超过7个账号')
+          return
+        }
         var data = {
           id:this.tableData[this.selectIndex].id,
           user_id:this.inputUserId,
           hospital:this.hospital,
           department:this.department,
+          bind_user:this.bind_user,
         }
         updateDevice(data).then((res)=>{
           console.log('编辑锁信息--------',res)

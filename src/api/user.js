@@ -33,6 +33,7 @@ export const logout = (token) => {
 }
 // 获取用户列表
 export const getUserList = (data) => {
+  data.money_lt_zero = data.money_lt_zero == '0'?null:'1'
   return axios.request({
     url: 'mobile/user/pageByUser',
     data: data,

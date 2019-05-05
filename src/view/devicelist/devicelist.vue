@@ -280,7 +280,7 @@
           return
         }
         var bind_user
-        bind_user = this.bind_user+','+ this.inputUserId
+        bind_user = this.bind_user?this.bind_user+','+ this.inputUserId:''+this.inputUserId
         bind_user = uniq(bind_user.split(','))
         if(bind_user.length > 8){
           this.$Message.error('不得超过8个账号')

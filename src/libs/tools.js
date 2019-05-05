@@ -213,3 +213,18 @@ export const objEqual = (obj1, obj2) => {
   /* eslint-disable-next-line */
   else return !keysArr1.some(key => obj1[key] != obj2[key])
 }
+
+/**
+ * @param {*} array 目标数组
+ * @description 数组去重
+ * @return 返回一个新数组
+ */
+export const uniq = (array) => {
+  var temp = []; //一个新的临时数组
+  for(var i = 0; i < array.length; i++){
+    if(temp.indexOf(array[i]) == -1){
+      temp.push(array[i]);
+    }
+  }
+  return temp;
+}

@@ -64,7 +64,7 @@
       <div class="input-item"><span>代理商：</span><Input v-model="inputUserId" placeholder="请输入用户ID" style="width: 200px" /></div>
       <div class="input-item"><span>绑定医院：</span><Input v-model="hospital" placeholder="请输入医院" style="width: 200px" /></div>
       <div class="input-item"><span>科室：</span><Input v-model="department" placeholder="请输入科室" style="width: 200px" /></div>
-      <div class="input-item"><span>其他用户：</span><Input v-model="bind_user" placeholder="请输入用户ID,使用英文的逗号隔开" style="width: 400px" /></div>
+      <div class="input-item"><span>查询用户：</span><Input v-model="bind_user" placeholder="请输入用户ID,使用英文的逗号隔开" style="width: 400px" /></div>
     </Modal>
     <Modal
       v-model="showEditPrice"
@@ -81,6 +81,7 @@
   // import table2excel from '@/libs/table2excel.js'
   import { getDeviceList,updateDevice,updateDevicePrice } from '@/api/devicelist'
   import {mapGetters} from 'vuex'
+  import { uniq } from "../../libs/tools"
   export default {
     name: 'devicelist',
     components: {
@@ -274,8 +275,15 @@
       },
       //编辑锁信息
       updateDevice(){
-        if(this.bind_user.split(',').length > 7){
-          this.$Message.error('不得超过7个账号')
+        if(!this.inputUserId){
+          this.$Message.error('请输入代理商')
+          return
+        }
+        var bind_user
+        bind_user = this.bind_user+','+ this.inputUserId
+        bind_user = uniq(this.bind_user.split(','))
+        if(bind_user.length > 8){
+          this.$Message.error('不得超过8个账号')
           return
         }
         var data = {
@@ -283,7 +291,7 @@
           user_id:this.inputUserId,
           hospital:this.hospital,
           department:this.department,
-          bind_user:this.bind_user,
+          bind_user:bind_user.join(','),
         }
         updateDevice(data).then((res)=>{
           console.log('编辑锁信息--------',res)
@@ -291,6 +299,7 @@
             this.tableData[this.selectIndex].user_id = this.inputUserId
             this.tableData[this.selectIndex].hospital = this.hospital
             this.tableData[this.selectIndex].department = this.department
+            this.tableData[this.selectIndex].bind_user = data.bind_user
             this.$Message.success('操作成功!')
           }
         }).catch(err => {

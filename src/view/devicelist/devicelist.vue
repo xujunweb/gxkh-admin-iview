@@ -61,10 +61,10 @@
       @on-ok="updateDevice"
       @on-cancel="cancel">
       <h3>锁二维码编号：{{this.tableData[this.selectIndex]&&this.tableData[this.selectIndex].qr_code_no}}</h3>
-      <div class="input-item"><span>代理商：</span><Input v-model="inputUserId" placeholder="请输入用户ID" style="width: 200px" /></div>
-      <div class="input-item"><span>绑定医院：</span><Input v-model="hospital" placeholder="请输入医院" style="width: 200px" /></div>
-      <div class="input-item"><span>科室：</span><Input v-model="department" placeholder="请输入科室" style="width: 200px" /></div>
-      <div class="input-item"><span>查询用户：</span><Input v-model="bind_user" placeholder="请输入用户ID,使用英文的逗号隔开" style="width: 400px" /></div>
+      <div class="input-item"><span>代理商：</span><Input v-model.trim="inputUserId" placeholder="请输入用户ID" style="width: 200px" /></div>
+      <div class="input-item"><span>绑定医院：</span><Input v-model.trim="hospital" placeholder="请输入医院" style="width: 200px" /></div>
+      <div class="input-item"><span>科室：</span><Input v-model.trim="department" placeholder="请输入科室" style="width: 200px" /></div>
+      <div class="input-item"><span>查询用户：</span><Input v-model.trim="bind_user" placeholder="请输入用户ID,使用英文的逗号隔开" style="width: 400px" /></div>
     </Modal>
     <Modal
       v-model="showEditPrice"
@@ -72,7 +72,7 @@
       @on-ok="updateDevicePrice"
       @on-cancel="cancel">
       <h3>锁二维码编号：{{this.tableData[this.selectIndex]&&this.tableData[this.selectIndex].qr_code_no}}</h3>
-      <div class="input-item"><span>价格：</span><Input v-model="inputPrice" placeholder="请输入价格" style="width: 200px" /></div>
+      <div class="input-item"><span>价格：</span><Input v-model.trim="inputPrice" placeholder="请输入价格" style="width: 200px" /></div>
     </Modal>
   </div>
 </template>
@@ -281,7 +281,7 @@
         }
         var bind_user
         bind_user = this.bind_user+','+ this.inputUserId
-        bind_user = uniq(this.bind_user.split(','))
+        bind_user = uniq(bind_user.split(','))
         if(bind_user.length > 8){
           this.$Message.error('不得超过8个账号')
           return

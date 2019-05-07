@@ -214,7 +214,7 @@ export default {
       var data = {
         user_id:this.formEdit.id,
         type:this.formEdit.type,
-        money:this.formEdit.money*100,
+        money:''+(this.formEdit.money*100),
       }
       updateUser(data).then((res)=>{
         console.log('编辑用户信息--------',res)

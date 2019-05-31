@@ -33,7 +33,7 @@
       </Upload>
     </div>
     <div class="block"></div>
-    <div class="title-h2">官网轮播图<span>(图片比例建议1920X991,大小不超过5M)</span></div>
+    <div class="title-h2">官网轮播图<span>(图片比例建议1920X600,大小不超过5M)</span></div>
     <div class="imgList moudel">
       <div class="demo-upload-list" v-for="(item,key) in uploadList2">
         <template v-if="!item.showProgress || item.showProgress == 100">

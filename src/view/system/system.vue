@@ -293,7 +293,9 @@ export default {
       // const fileList = this.$refs.upload.fileList
       this.$refs[upload].fileList.splice(this.removeKey, 1)
       this[uploadList].splice(this.removeKey, 1)
-      // this.updateAppointInfo(this.imgMap[this.imgIndex],this[uploadList].join(','))
+      if(this.imgIndex != 3){
+        this.updateAppointInfo(this.imgMap[this.imgIndex],this[uploadList].join(','))
+      }
     },
     //上传成功
     handleSuccess (res, file) {
@@ -311,6 +313,7 @@ export default {
         this.updateAppointInfo(this.imgMap[this.imgIndex],this[uploadList].join(','))
       }
     },
+    //保存轮播图
     //保存产品图片
     saveProImg(){
       var isadd = true
